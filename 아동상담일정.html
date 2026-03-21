@@ -7,6 +7,36 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&display=swap');
+  #pw-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f5f4f0;font-family:'Noto Sans KR',sans-serif}
+  #pw-box{background:#fff;border:1px solid #e0dfd8;border-radius:16px;padding:2rem;width:300px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+  #pw-title{font-size:18px;font-weight:600;margin-bottom:6px}
+  #pw-sub{font-size:12px;color:#888;margin-bottom:20px}
+  #pw-input{width:100%;font-family:'Noto Sans KR',sans-serif;font-size:14px;padding:10px;border:1px solid #e0dfd8;border-radius:8px;outline:none;text-align:center;letter-spacing:2px;margin-bottom:10px;box-sizing:border-box}
+  #pw-input:focus{border-color:#3a5bd9}
+  #pw-btn{width:100%;padding:10px;background:#3a5bd9;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Noto Sans KR',sans-serif}
+  #pw-btn:hover{background:#2f4db8}
+  #pw-error{font-size:12px;color:#dc2626;margin-top:8px;min-height:18px}
+  #app-content{display:none}
+</style>
+</head>
+<body>
+
+<!-- 비밀번호 화면 -->
+<div id="pw-screen">
+  <div id="pw-box">
+    <div id="pw-title">🔒 상담일정 관리</div>
+    <div id="pw-sub">접속 비밀번호를 입력해 주세요</div>
+    <div style="position:relative;margin-bottom:10px">
+      <input id="pw-input" type="password" placeholder="비밀번호" onkeydown="if(event.key==='Enter')checkPw()" style="width:100%;font-family:'Noto Sans KR',sans-serif;font-size:14px;padding:10px 40px 10px 10px;border:1px solid #e0dfd8;border-radius:8px;outline:none;text-align:center;letter-spacing:2px;box-sizing:border-box"/>
+      <button onclick="togglePw()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;padding:0" id="pw-eye">👁️</button>
+    </div>
+    <button id="pw-btn" onclick="checkPw()">확인</button>
+    <div id="pw-error"></div>
+  </div>
+</div>
+
+<div id="app-content">
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&display=swap');
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Noto Sans KR',sans-serif;background:#f5f4f0;color:#1a1a1a;min-height:100vh}
   .tab-bar{display:flex;background:#fff;border-bottom:1px solid #e0dfd8;padding:0 2rem;overflow-x:auto}
@@ -604,6 +634,26 @@
 <div class="autosave-toast" id="autosave-toast"></div>
 
 <script>
+// ── 비밀번호 확인 ──────────────────────────────────────────────
+function togglePw(){
+  const input = document.getElementById('pw-input');
+  input.type = input.type === 'password' ? 'text' : 'password';
+}
+function checkPw(){
+  const pw = document.getElementById('pw-input').value;
+  if(pw === 'bor4450'){
+    document.getElementById('pw-screen').style.display = 'none';
+    document.getElementById('app-content').style.display = 'block';
+    initMain();
+  } else {
+    document.getElementById('pw-error').textContent = '비밀번호가 틀렸어요. 다시 입력해 주세요.';
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
+  }
+}
+</script>
+
+</div><!-- /app-content -->
 /* ==========================================================
    아동 상담일정 자동 생성기 — 관리자 가이드
    ==========================================================
@@ -2493,12 +2543,11 @@ function setGsStatus(msg, color) {
   if(el){ el.textContent = msg; el.style.color = color||'#333'; }
 }
 
+function initMain(){
 const saved = localStorage.getItem(LS_KEY);
 if(saved){
   try{
     applyAppState(JSON.parse(saved));
-    // 아동 정보(타입·가용시간)는 항상 코드 기준으로 강제 복원
-    // → localStorage의 이전 타입(일반↔정기 오류 등) 무시
     Object.entries(DEFAULT_AVAIL).forEach(([name, def])=>{
       if(AVAIL[name]){
         AVAIL[name].type = def.type;
@@ -2509,7 +2558,6 @@ if(saved){
         AVAIL[name] = JSON.parse(JSON.stringify(def));
       }
     });
-    // 1~3월: 코드 기준 강제 덮어쓰기 (완료/취소 상태 보존)
     const saveSlotState = (prefix) => {
       const map = {};
       Object.keys(schedule).filter(k=>k.startsWith(prefix)).forEach(k=>{
@@ -2531,8 +2579,6 @@ if(saved){
     loadJanSchedule();   restoreSlotState('2026-0-',s0); generatedMonths.add('2026-0');
     loadFebSchedule();   restoreSlotState('2026-1-',s1); generatedMonths.add('2026-1');
     loadMarchSchedule(); restoreSlotState('2026-2-',s2); generatedMonths.add('2026-2');
-    // 4월~: localStorage 저장값 우선 유지 (앱에서 수정한 내용 보존)
-    // 4월 데이터가 없을 때만 코드 기본값으로 초기화
     const has4월 = Object.keys(schedule).some(k=>k.startsWith('2026-3-'));
     if(!has4월){ loadAprilSchedule(); }
     generatedMonths.add('2026-3');
@@ -2544,6 +2590,7 @@ if(saved){
   }
 } else {
   initApp();
+}
 }
 </script>
 </body>
