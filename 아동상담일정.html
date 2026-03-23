@@ -198,7 +198,6 @@
 </style>
 </head>
 <body>
-<!-- 비밀번호 화면 -->
 <style>
   #pw-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f5f4f0;font-family:'Noto Sans KR',sans-serif;position:fixed;inset:0;z-index:9999}
   #pw-box{background:#fff;border:1px solid #e0dfd8;border-radius:16px;padding:2rem;width:300px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.08)}
@@ -2062,6 +2061,15 @@ let overallData = [
   { name:'김연아',  grade:'2월졸업', room:['1/14','2/9','','','','','',''],  guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
 ];
 
+function gradeOrder(grade){
+  const map = {'미취학':0,'초등1':1,'초등2':2,'초등3':3,'초등4':4,'초등5':5,'초등6':6,'중등1':7,'중등2':8,'중등3':9,'고등1':10,'고등2':11,'고등3':12};
+  return map[grade] !== undefined ? map[grade] : 99;
+}
+
+function sortOverallData(){
+  overallData.sort((a,b) => gradeOrder(a.grade) - gradeOrder(b.grade));
+}
+
 function addOverallChild(){
   document.getElementById('overall-add-form').style.display='block';
   document.getElementById('ov-name').focus();
@@ -2074,6 +2082,7 @@ function saveOverallChild(){
   // 앱에 등록된 아동이면 clinic은 앱 연동, 아니면 수동 입력
   const isAppChild = !!AVAIL[name];
   overallData.push({ name, grade, room: Array(ROOM_COLS).fill(''), guide: Array(GUIDE_COLS).fill(''), clinicManual: isAppChild ? null : Array(GUIDE_COLS).fill('') });
+  sortOverallData();
   document.getElementById('ov-name').value='';
   document.getElementById('ov-grade').value='';
   document.getElementById('overall-add-form').style.display='none';
