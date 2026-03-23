@@ -2052,13 +2052,17 @@ let overallData = [
   { name:'이상현',  grade:'고등3',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
   { name:'엄수경',  grade:'고등3',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
   { name:'장성일',  grade:'2월졸업', room:['1/27','2/21','','','','','',''], guide:['1/27','','',''],  clinicManual:Array(GUIDE_COLS).fill('') },
-  { name:'권율',    grade:'초등2',  room:['1/19','2/22','','','','','',''], guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
-  { name:'장정은',  grade:'초등2',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
+  { name:'권율',    grade:'2월졸업',  room:['1/19','2/22','','','','','',''], guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
+  { name:'장정은',  grade:'고등2',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
   { name:'김가영',  grade:'고등3',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
   { name:'김혜진',  grade:'2월졸업', room:['1/30','2/7','','','','','',''],  guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
   { name:'박수진',  grade:'2월졸업', room:['1/23','2/7','','','','','',''],  guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
   { name:'이희망',  grade:'2월졸업', room:['1/4','2/20','','','','','',''],  guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
   { name:'김연아',  grade:'2월졸업', room:['1/14','2/9','','','','','',''],  guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
+  { name:'강예림',  grade:'초등4',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'강석현',  grade:'초등6',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'강예린',  grade:'중등2',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'정요한',  grade:'중등2',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
 ];
 
 function gradeOrder(grade){
@@ -2189,6 +2193,7 @@ function updateOverallFooter(){
 }
 
 function renderOverall(){
+  sortOverallData();
   // ── 연간 요약 계산 ──
   let roomT=0, clinicT=0, guideT=0;
   let childWithSession=0;
@@ -2271,10 +2276,10 @@ function renderOverall(){
     tr.id = `ov-row-${idx}`;
     tr.innerHTML = `
       <td style="padding:2px;border:1px solid #e0dfd8;min-width:70px;text-align:center">
-        <input value="${d.name}" onblur="updateOverallMeta(${idx},'name',this.value)"
+        <span style="font-size:10px;color:#aaa;margin-right:2px">${idx+1}.</span><input value="${d.name}" onblur="updateOverallMeta(${idx},'name',this.value)"
           onfocus="this.style.borderBottom='1.5px solid #3a5bd9'"
           onblur2="this.style.borderBottom='none'"
-          style="width:66px;font-size:12px;font-weight:600;border:none;border-bottom:1px solid transparent;outline:none;text-align:center;font-family:'Noto Sans KR',sans-serif;background:transparent;cursor:text"/>
+          style="width:56px;font-size:12px;font-weight:600;border:none;border-bottom:1px solid transparent;outline:none;text-align:center;font-family:'Noto Sans KR',sans-serif;background:transparent;cursor:text"/>
       </td>
       <td style="padding:2px;border:1px solid #e0dfd8;text-align:center;min-width:55px">
         <input value="${d.grade}" onblur="updateOverallMeta(${idx},'grade',this.value)"
