@@ -2208,11 +2208,11 @@ function renderOverall(){
   // 연간 목표: 임상심리 기준 (앱 목표)
   let annualPlan=0;
   Object.values(AVAIL).forEach(v=>{for(let m=0;m<12;m++){if(isActiveAt(v,2026,m))annualPlan+=v.type==='정기'?2:1;}});
-  const pct = annualPlan>0?Math.round(clinicT/annualPlan*100):0;
-  const remain = Math.max(annualPlan-clinicT,0);
+  const pct = annualPlan>0?Math.round(total/annualPlan*100):0;
+  const remain = Math.max(annualPlan-total,0);
 
   // 진행률 카드
-  document.getElementById('ov-done').textContent=clinicT;
+  document.getElementById('ov-done').textContent=total;
   document.getElementById('ov-plan').textContent=annualPlan;
   document.getElementById('ov-pct').textContent=pct+'%';
   document.getElementById('ov-remain').textContent=remain;
