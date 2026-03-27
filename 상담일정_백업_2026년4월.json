@@ -1,0 +1,3298 @@
+{
+  "schedule": {
+    "2026-4-1": [
+      {
+        "date": "2026-04-30T15:00:00.000Z",
+        "wd": 4,
+        "time": 16,
+        "child": "김민재",
+        "type": "정기",
+        "conflict": false
+      },
+      {
+        "date": "2026-04-30T15:00:00.000Z",
+        "wd": 4,
+        "time": 18,
+        "child": "김현진",
+        "type": "정기",
+        "conflict": false
+      }
+    ],
+    "2026-4-4": [
+      {
+        "date": "2026-05-03T15:00:00.000Z",
+        "wd": 0,
+        "time": 16,
+        "child": null,
+        "type": null,
+        "conflict": false
+      },
+      {
+        "date": "2026-05-03T15:00:00.000Z",
+        "wd": 0,
+        "time": 18,
+        "child": "김민지",
+        "type": "일반",
+        "conflict": false
+      }
+    ],
+    "2026-4-5": [
+      {
+        "date": "2026-05-04T15:00:00.000Z",
+        "wd": 1,
+        "time": 16,
+        "child": "김영진",
+        "type": "정기",
+        "conflict": false
+      },
+      {
+        "date": "2026-05-04T15:00:00.000Z",
+        "wd": 1,
+        "time": 18,
+        "child": "김선웅",
+        "type": "정기",
+        "conflict": false
+      }
+    ],
+    "2026-4-6": [
+      {
+        "date": "2026-05-05T15:00:00.000Z",
+        "wd": 2,
+        "time": 16,
+        "child": null,
+        "type": null,
+        "conflict": false
+      },
+      {
+        "date": "2026-05-05T15:00:00.000Z",
+        "wd": 2,
+        "time": 18,
+        "child": "김우빈",
+        "type": "정기",
+        "conflict": false
+      }
+    ],
+    "2026-4-7": [
+      {
+        "date": "2026-05-06T15:00:00.000Z",
+        "wd": 3,
+        "time": 16,
+        "child": "문지완",
+        "type": "정기",
+        "conflict": false
+      },
+      {
+        "date": "2026-05-06T15:00:00.000Z",
+        "wd": 3,
+        "time": 18,
+        "child": "오하영",
+        "type": "정기",
+        "conflict": false
+      }
+    ],
+    "2026-4-8": [
+      {
+        "date": "2026-05-07T15:00:00.000Z",
+        "wd": 4,
+        "time": 16,
+        "child": null,
+        "type": null,
+        "conflict": false
+      },
+      {
+        "date": "2026-05-07T15:00:00.000Z",
+        "wd": 4,
+        "time": 18,
+        "child": "문수아",
+        "type": "일반",
+        "conflict": false
+      }
+    ],
+    "2026-4-11": [
+      {
+        "date": "2026-05-10T15:00:00.000Z",
+        "wd": 0,
+        "time": 16,
+        "child": null,
+        "type": null,
+        "conflict": false
+      },
+      {
+        "date": "2026-05-10T15:00:00.000Z",
+        "wd": 0,
+        "time": 18,
+        "child": "박찬율",
+        "type": "일반",
+        "conflict": false
+      }
+    ],
+    "2026-4-12": [
+      {
+        "date": "2026-05-11T15:00:00.000Z",
+        "wd": 1,
+        "time": 16,
+        "child": null,
+        "type": null,
+        "conflict": false
+      },
+      {
+        "date": "2026-05-11T15:00:00.000Z",
+        "wd": 1,
+        "time": 18,
+        "child": "이로운",
+        "type": "정기",
+        "conflict": false
+      }
+    ],
+    "2026-4-13": [
+      {
+        "date": "2026-05-12T15:00:00.000Z",
+        "wd": 2,
+        "time": 16,
+        "child": "김사랑",
+        "type": "일반",
+        "conflict": false
+      },
+      {
+        "date": "2026-05-12T15:00:00.000Z",
+        "wd": 2,
+        "time": 18,
+        "child": "김도윤",
+        "type": "일반",
+        "conflict": false
+      }
+    ],
+    "2026-4-14": [
+      {
+        "date": "2026-05-13T15:00:00.000Z",
+        "wd": 3,
+        "time": 16,
+        "child": null,
+        "type": null,
+        "conflict": false
+      },
+      {
+        "date": "2026-05-13T15:00:00.000Z",
+        "wd": 3,
+        "time": 18,
+        "child": "유하린",
+        "type": "정기",
+        "conflict": false
+      }
+    ],
+    "2026-4-15": [
+      {
+        "date": "2026-05-14T15:00:00.000Z",
+        "wd": 4,
+        "time": 16,
+        "child": "김민재",
+        "type": "정기",
+        "conflict": false
+      },
+      {
+        "date": "2026-05-14T15:00:00.000Z",
+        "wd": 4,
+        "time": 18,
+        "child": "김현진",
+        "type": "정기",
+        "conflict": false
+      }
+    ],
+    "2026-4-18": [
+      {
+        "date": "2026-05-17T15:00:00.000Z",
+        "wd": 0,
+        "time": 16,
+        "child": null,
+        "type": null,
+        "conflict": false
+      },
+      {
+        "date": "2026-05-17T15:00:00.000Z",
+        "wd": 0,
+        "time": 18,
+        "child": "김한별",
+        "type": "일반",
+        "conflict": false
+      }
+    ],
+    "2026-4-19": [
+      {
+        "date": "2026-05-18T15:00:00.000Z",
+        "wd": 1,
+        "time": 16,
+        "child": "김영진",
+        "type": "정기",
+        "conflict": false
+      },
+      {
+        "date": "2026-05-18T15:00:00.000Z",
+        "wd": 1,
+        "time": 18,
+        "child": "김선웅",
+        "type": "정기",
+        "conflict": false
+      }
+    ],
+    "2026-4-20": [
+      {
+        "date": "2026-05-19T15:00:00.000Z",
+        "wd": 2,
+        "time": 16,
+        "child": "황다은",
+        "type": "일반",
+        "conflict": false
+      },
+      {
+        "date": "2026-05-19T15:00:00.000Z",
+        "wd": 2,
+        "time": 18,
+        "child": "김우빈",
+        "type": "정기",
+        "conflict": false
+      }
+    ],
+    "2026-4-21": [
+      {
+        "date": "2026-05-20T15:00:00.000Z",
+        "wd": 3,
+        "time": 16,
+        "child": "문지완",
+        "type": "정기",
+        "conflict": false
+      },
+      {
+        "date": "2026-05-20T15:00:00.000Z",
+        "wd": 3,
+        "time": 18,
+        "child": "오하영",
+        "type": "정기",
+        "conflict": false
+      }
+    ],
+    "2026-4-22": [
+      {
+        "date": "2026-05-21T15:00:00.000Z",
+        "wd": 4,
+        "time": 16,
+        "child": null,
+        "type": null,
+        "conflict": false
+      },
+      {
+        "date": "2026-05-21T15:00:00.000Z",
+        "wd": 4,
+        "time": 18,
+        "child": null,
+        "type": null,
+        "conflict": false
+      }
+    ],
+    "2026-4-25": [
+      {
+        "date": "2026-05-24T15:00:00.000Z",
+        "wd": 0,
+        "time": 16,
+        "child": "오하은",
+        "type": "일반",
+        "conflict": false
+      },
+      {
+        "date": "2026-05-24T15:00:00.000Z",
+        "wd": 0,
+        "time": 18,
+        "child": "강석현",
+        "type": "일반",
+        "conflict": false
+      }
+    ],
+    "2026-4-26": [
+      {
+        "date": "2026-05-25T15:00:00.000Z",
+        "wd": 1,
+        "time": 16,
+        "child": null,
+        "type": null,
+        "conflict": false
+      },
+      {
+        "date": "2026-05-25T15:00:00.000Z",
+        "wd": 1,
+        "time": 18,
+        "child": "이로운",
+        "type": "정기",
+        "conflict": false
+      }
+    ],
+    "2026-4-27": [
+      {
+        "date": "2026-05-26T15:00:00.000Z",
+        "wd": 2,
+        "time": 16,
+        "child": "강예림",
+        "type": "일반",
+        "conflict": false
+      },
+      {
+        "date": "2026-05-26T15:00:00.000Z",
+        "wd": 2,
+        "time": 18,
+        "child": "이지후",
+        "type": "일반",
+        "conflict": false
+      }
+    ],
+    "2026-4-28": [
+      {
+        "date": "2026-05-27T15:00:00.000Z",
+        "wd": 3,
+        "time": 16,
+        "child": null,
+        "type": null,
+        "conflict": false
+      },
+      {
+        "date": "2026-05-27T15:00:00.000Z",
+        "wd": 3,
+        "time": 18,
+        "child": "유하린",
+        "type": "정기",
+        "conflict": false
+      }
+    ],
+    "2026-4-29": [
+      {
+        "date": "2026-05-28T15:00:00.000Z",
+        "wd": 4,
+        "time": 16,
+        "child": "이재민",
+        "type": "일반",
+        "conflict": false
+      },
+      {
+        "date": "2026-05-28T15:00:00.000Z",
+        "wd": 4,
+        "time": 18,
+        "child": "김재현",
+        "type": "일반",
+        "conflict": false
+      }
+    ],
+    "2026-3-1": [
+      {
+        "date": "2026-03-31T15:00:00.000Z",
+        "wd": 2,
+        "time": 18,
+        "child": "김민지",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-3-2": [
+      {
+        "date": "2026-04-01T15:00:00.000Z",
+        "wd": 3,
+        "time": 16,
+        "child": "김사랑",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-04-01T15:00:00.000Z",
+        "wd": 3,
+        "time": 16,
+        "child": "김한별",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-3-3": [
+      {
+        "date": "2026-04-02T15:00:00.000Z",
+        "wd": 4,
+        "time": 16,
+        "child": "김민재",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-04-02T15:00:00.000Z",
+        "wd": 4,
+        "time": 18,
+        "child": "유하린",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-3-6": [
+      {
+        "date": "2026-04-05T15:00:00.000Z",
+        "wd": 0,
+        "time": 18,
+        "child": "이로운",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-3-7": [
+      {
+        "date": "2026-04-06T15:00:00.000Z",
+        "wd": 1,
+        "time": 16,
+        "child": "김영진",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-04-06T15:00:00.000Z",
+        "wd": 1,
+        "time": 18,
+        "child": "김선웅",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-3-8": [
+      {
+        "date": "2026-04-07T15:00:00.000Z",
+        "wd": 2,
+        "time": 18,
+        "child": "이지후",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-3-9": [
+      {
+        "date": "2026-04-08T15:00:00.000Z",
+        "wd": 3,
+        "time": 16,
+        "child": "문지완",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-3-13": [
+      {
+        "date": "2026-04-12T15:00:00.000Z",
+        "wd": 0,
+        "time": 16,
+        "child": "문수아",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-04-12T15:00:00.000Z",
+        "wd": 0,
+        "time": 18,
+        "child": "강석현",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-3-14": [],
+    "2026-3-15": [
+      {
+        "date": "2026-04-14T15:00:00.000Z",
+        "wd": 2,
+        "time": 18,
+        "child": "김민지",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-3-16": [
+      {
+        "date": "2026-04-15T15:00:00.000Z",
+        "wd": 3,
+        "time": 18,
+        "child": "김한별",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-3-17": [
+      {
+        "date": "2026-04-16T15:00:00.000Z",
+        "wd": 4,
+        "time": 16,
+        "child": "김민재",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-04-16T15:00:00.000Z",
+        "wd": 4,
+        "time": 18,
+        "child": "오하영",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-3-20": [
+      {
+        "date": "2026-04-19T15:00:00.000Z",
+        "wd": 0,
+        "time": 18,
+        "child": "이로운",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-3-21": [
+      {
+        "date": "2026-04-20T15:00:00.000Z",
+        "wd": 1,
+        "time": 16,
+        "child": "김영진",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-04-20T15:00:00.000Z",
+        "wd": 1,
+        "time": 18,
+        "child": "김선웅",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-3-22": [
+      {
+        "date": "2026-04-21T15:00:00.000Z",
+        "wd": 2,
+        "time": 18,
+        "child": "유하린",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-3-23": [
+      {
+        "date": "2026-04-22T15:00:00.000Z",
+        "wd": 3,
+        "time": 15.5,
+        "child": "김도윤",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-04-22T15:00:00.000Z",
+        "wd": 3,
+        "time": 16,
+        "child": "문지완",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-3-24": [
+      {
+        "date": "2026-04-23T15:00:00.000Z",
+        "wd": 4,
+        "time": 16,
+        "child": "이재민",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-04-23T15:00:00.000Z",
+        "wd": 4,
+        "time": 18,
+        "child": "오하영",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-3-27": [
+      {
+        "date": "2026-04-26T15:00:00.000Z",
+        "wd": 0,
+        "time": 16,
+        "child": "김재현",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-3-29": [
+      {
+        "date": "2026-04-28T15:00:00.000Z",
+        "wd": 2,
+        "time": 16,
+        "child": "강예림",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-04-28T15:00:00.000Z",
+        "wd": 2,
+        "time": 18,
+        "child": "박찬율",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-3-30": [
+      {
+        "date": "2026-04-29T15:00:00.000Z",
+        "wd": 3,
+        "time": 16,
+        "child": "오하은",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-04-29T15:00:00.000Z",
+        "wd": 3,
+        "time": 18,
+        "child": "황다은",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-0-5": [
+      {
+        "date": "2026-01-04T15:00:00.000Z",
+        "wd": 0,
+        "time": 18,
+        "child": "이로운",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-0-6": [
+      {
+        "date": "2026-01-05T15:00:00.000Z",
+        "wd": 1,
+        "time": 18,
+        "child": "유하린",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-0-7": [
+      {
+        "date": "2026-01-06T15:00:00.000Z",
+        "wd": 2,
+        "time": 16,
+        "child": "오하영",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-01-06T15:00:00.000Z",
+        "wd": 2,
+        "time": 18,
+        "child": "문수아",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-0-8": [
+      {
+        "date": "2026-01-07T15:00:00.000Z",
+        "wd": 3,
+        "time": 18,
+        "child": "김민재",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-0-12": [
+      {
+        "date": "2026-01-11T15:00:00.000Z",
+        "wd": 0,
+        "time": 18,
+        "child": "황다은",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-0-13": [
+      {
+        "date": "2026-01-12T15:00:00.000Z",
+        "wd": 1,
+        "time": 18,
+        "child": "유하린",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-0-14": [
+      {
+        "date": "2026-01-13T15:00:00.000Z",
+        "wd": 2,
+        "time": 16,
+        "child": "문지완",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-01-13T15:00:00.000Z",
+        "wd": 2,
+        "time": 18,
+        "child": "오하은",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-0-15": [
+      {
+        "date": "2026-01-14T15:00:00.000Z",
+        "wd": 3,
+        "time": 16,
+        "child": "김민지",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-01-14T15:00:00.000Z",
+        "wd": 3,
+        "time": 18,
+        "child": "김영진",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-0-16": [
+      {
+        "date": "2026-01-15T15:00:00.000Z",
+        "wd": 4,
+        "time": 16,
+        "child": "김민재",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-01-15T15:00:00.000Z",
+        "wd": 4,
+        "time": 18,
+        "child": "문지완",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-0-19": [
+      {
+        "date": "2026-01-18T15:00:00.000Z",
+        "wd": 0,
+        "time": 16,
+        "child": "김영진",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-01-18T15:00:00.000Z",
+        "wd": 0,
+        "time": 18,
+        "child": "김선웅",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-0-20": [
+      {
+        "date": "2026-01-19T15:00:00.000Z",
+        "wd": 1,
+        "time": 16,
+        "child": "이로운",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-01-19T15:00:00.000Z",
+        "wd": 1,
+        "time": 18,
+        "child": "김한별",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-0-21": [
+      {
+        "date": "2026-01-20T15:00:00.000Z",
+        "wd": 2,
+        "time": 16,
+        "child": "김사랑",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-01-20T15:00:00.000Z",
+        "wd": 2,
+        "time": 18,
+        "child": "김재현",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-0-27": [
+      {
+        "date": "2026-01-26T15:00:00.000Z",
+        "wd": 1,
+        "time": 11,
+        "child": "박찬율",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-01-26T15:00:00.000Z",
+        "wd": 1,
+        "time": 18,
+        "child": "김민지",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-0-28": [
+      {
+        "date": "2026-01-27T15:00:00.000Z",
+        "wd": 2,
+        "time": 16,
+        "child": "김도윤",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-01-27T15:00:00.000Z",
+        "wd": 2,
+        "time": 18,
+        "child": "오하영",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-0-29": [
+      {
+        "date": "2026-01-28T15:00:00.000Z",
+        "wd": 3,
+        "time": 16,
+        "child": "이재민",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-01-28T15:00:00.000Z",
+        "wd": 3,
+        "time": 18,
+        "child": "김선웅",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-0-30": [
+      {
+        "date": "2026-01-29T15:00:00.000Z",
+        "wd": 4,
+        "time": 16,
+        "child": "김한별",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-01-29T15:00:00.000Z",
+        "wd": 4,
+        "time": 18,
+        "child": "이지후",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-1-2": [
+      {
+        "date": "2026-02-01T15:00:00.000Z",
+        "wd": 0,
+        "time": 16,
+        "child": "김영진",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-02-01T15:00:00.000Z",
+        "wd": 0,
+        "time": 18,
+        "child": "이로운",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-1-3": [
+      {
+        "date": "2026-02-02T15:00:00.000Z",
+        "wd": 1,
+        "time": 10,
+        "child": "김도윤",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-02-02T15:00:00.000Z",
+        "wd": 1,
+        "time": 18,
+        "child": "오하은",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-1-4": [
+      {
+        "date": "2026-02-03T15:00:00.000Z",
+        "wd": 2,
+        "time": 18,
+        "child": "김재현",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-1-5": [
+      {
+        "date": "2026-02-04T15:00:00.000Z",
+        "wd": 3,
+        "time": 16,
+        "child": "김민지",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-02-04T15:00:00.000Z",
+        "wd": 3,
+        "time": 18,
+        "child": "김민재",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-1-6": [
+      {
+        "date": "2026-02-05T15:00:00.000Z",
+        "wd": 4,
+        "time": 18,
+        "child": "김한별",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-1-9": [
+      {
+        "date": "2026-02-08T15:00:00.000Z",
+        "wd": 0,
+        "time": 16,
+        "child": "김영진",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-02-08T15:00:00.000Z",
+        "wd": 0,
+        "time": 18,
+        "child": "이로운",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-1-10": [
+      {
+        "date": "2026-02-09T15:00:00.000Z",
+        "wd": 1,
+        "time": 11,
+        "child": "이재민",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-02-09T15:00:00.000Z",
+        "wd": 1,
+        "time": 18,
+        "child": "김선웅",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-1-11": [
+      {
+        "date": "2026-02-10T15:00:00.000Z",
+        "wd": 2,
+        "time": 18,
+        "child": "오하영",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-1-12": [
+      {
+        "date": "2026-02-11T15:00:00.000Z",
+        "wd": 3,
+        "time": 13,
+        "child": "박찬율",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-02-11T15:00:00.000Z",
+        "wd": 3,
+        "time": 18,
+        "child": "김민재",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-1-13": [
+      {
+        "date": "2026-02-12T15:00:00.000Z",
+        "wd": 4,
+        "time": 13,
+        "child": "이지후",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-02-12T15:00:00.000Z",
+        "wd": 4,
+        "time": 16,
+        "child": "김민지",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-02-12T15:00:00.000Z",
+        "wd": 4,
+        "time": 18,
+        "child": "문지완",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-1-19": [
+      {
+        "date": "2026-02-18T15:00:00.000Z",
+        "wd": 3,
+        "time": 15,
+        "child": "김사랑",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-02-18T15:00:00.000Z",
+        "wd": 3,
+        "time": 18,
+        "child": "유하린",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-1-25": [
+      {
+        "date": "2026-02-24T15:00:00.000Z",
+        "wd": 2,
+        "time": 11,
+        "child": "문수아",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-02-24T15:00:00.000Z",
+        "wd": 2,
+        "time": 18,
+        "child": "오하영",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-1-26": [
+      {
+        "date": "2026-02-25T15:00:00.000Z",
+        "wd": 3,
+        "time": 13,
+        "child": "김선웅",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-02-25T15:00:00.000Z",
+        "wd": 3,
+        "time": 16,
+        "child": "황다은",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-02-25T15:00:00.000Z",
+        "wd": 3,
+        "time": 18,
+        "child": "유하린",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-1-27": [
+      {
+        "date": "2026-02-26T15:00:00.000Z",
+        "wd": 4,
+        "time": 11,
+        "child": "김한별",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-02-26T15:00:00.000Z",
+        "wd": 4,
+        "time": 18,
+        "child": "문지완",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-2-3": [
+      {
+        "date": "2026-03-02T15:00:00.000Z",
+        "wd": 1,
+        "time": 16,
+        "child": "김영진",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-03-02T15:00:00.000Z",
+        "wd": 1,
+        "time": 18,
+        "child": "이로운",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-2-5": [
+      {
+        "date": "2026-03-04T15:00:00.000Z",
+        "wd": 3,
+        "time": 18,
+        "child": "박찬율",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-03-04T15:00:00.000Z",
+        "wd": 3,
+        "time": 19,
+        "child": "유하린",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-2-6": [
+      {
+        "date": "2026-03-05T15:00:00.000Z",
+        "wd": 4,
+        "time": 18,
+        "child": "김한별",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-2-9": [
+      {
+        "date": "2026-03-08T15:00:00.000Z",
+        "wd": 0,
+        "time": 18,
+        "child": "김도윤",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-03-08T15:00:00.000Z",
+        "wd": 0,
+        "time": 19,
+        "child": "오하은",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-2-10": [
+      {
+        "date": "2026-03-09T15:00:00.000Z",
+        "wd": 1,
+        "time": 18,
+        "child": "김선웅",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-03-09T15:00:00.000Z",
+        "wd": 1,
+        "time": 19,
+        "child": "이재민",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-2-11": [
+      {
+        "date": "2026-03-10T15:00:00.000Z",
+        "wd": 2,
+        "time": 18,
+        "child": "김민지",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-2-12": [
+      {
+        "date": "2026-03-11T15:00:00.000Z",
+        "wd": 3,
+        "time": 18,
+        "child": "문지완",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-2-13": [
+      {
+        "date": "2026-03-12T15:00:00.000Z",
+        "wd": 4,
+        "time": 16,
+        "child": "김민재",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-03-12T15:00:00.000Z",
+        "wd": 4,
+        "time": 18,
+        "child": "오하영",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-2-16": [
+      {
+        "date": "2026-03-15T15:00:00.000Z",
+        "wd": 0,
+        "time": 18,
+        "child": "황다은",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-03-15T15:00:00.000Z",
+        "wd": 0,
+        "time": 19,
+        "child": "김사랑",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-2-17": [
+      {
+        "date": "2026-03-16T15:00:00.000Z",
+        "wd": 1,
+        "time": 15,
+        "child": "문수아",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-03-16T15:00:00.000Z",
+        "wd": 1,
+        "time": 16,
+        "child": "김영진",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-03-16T15:00:00.000Z",
+        "wd": 1,
+        "time": 18,
+        "child": "이로운",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-2-18": [
+      {
+        "date": "2026-03-17T15:00:00.000Z",
+        "wd": 2,
+        "time": 18,
+        "child": "김재현",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-2-19": [
+      {
+        "date": "2026-03-18T15:00:00.000Z",
+        "wd": 3,
+        "time": 18,
+        "child": "유하린",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-03-18T15:00:00.000Z",
+        "wd": 3,
+        "time": 19,
+        "child": "오하영",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-2-20": [
+      {
+        "date": "2026-03-19T15:00:00.000Z",
+        "wd": 4,
+        "time": 18,
+        "child": "김한별",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-2-23": [
+      {
+        "date": "2026-03-22T15:00:00.000Z",
+        "wd": 0,
+        "time": 16,
+        "child": "김민재",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false,
+        "done": true
+      },
+      {
+        "date": "2026-03-22T15:00:00.000Z",
+        "wd": 0,
+        "time": 18,
+        "child": "이지후",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-2-25": [
+      {
+        "date": "2026-03-24T15:00:00.000Z",
+        "wd": 2,
+        "time": 16,
+        "child": "김선웅",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-03-24T15:00:00.000Z",
+        "wd": 2,
+        "time": 18,
+        "child": "김민지",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      }
+    ],
+    "2026-2-26": [
+      {
+        "date": "2026-03-25T15:00:00.000Z",
+        "wd": 3,
+        "time": 16,
+        "child": "강예림",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false,
+        "done": true
+      },
+      {
+        "date": "2026-03-25T15:00:00.000Z",
+        "wd": 3,
+        "time": 18,
+        "child": "문지완",
+        "type": "정기",
+        "conflict": false,
+        "cancelled": false
+      },
+      {
+        "date": "2026-03-25T15:00:00.000Z",
+        "wd": 3,
+        "time": 19,
+        "child": "강석현",
+        "type": "일반",
+        "conflict": false,
+        "cancelled": false
+      }
+    ]
+  },
+  "monthlyLog": {
+    "2026": {
+      "0": {
+        "total": 27,
+        "reg": 18,
+        "gen": 9,
+        "perChild": {
+          "이로운": 2,
+          "유하린": 2,
+          "오하영": 2,
+          "문지완": 2,
+          "김민재": 2,
+          "김민지": 2,
+          "김영진": 2,
+          "김선웅": 2,
+          "김한별": 2,
+          "문수아": 1,
+          "오하은": 1,
+          "김사랑": 1,
+          "김재현": 1,
+          "박찬율": 1,
+          "김도윤": 1,
+          "이재민": 1,
+          "이지후": 1,
+          "강예림": 1
+        }
+      },
+      "1": {
+        "total": 27,
+        "reg": 18,
+        "gen": 9,
+        "perChild": {
+          "김영진": 2,
+          "이로운": 2,
+          "김민지": 2,
+          "김민재": 2,
+          "김한별": 2,
+          "김선웅": 2,
+          "오하영": 2,
+          "문지완": 2,
+          "유하린": 2,
+          "김도윤": 1,
+          "오하은": 1,
+          "김재현": 1,
+          "이재민": 1,
+          "박찬율": 1,
+          "이지후": 1,
+          "김사랑": 1,
+          "문수아": 1,
+          "황다은": 1,
+          "강석현": 1
+        }
+      },
+      "2": {
+        "total": 19,
+        "reg": 11,
+        "gen": 8,
+        "perChild": {
+          "김영진": 2,
+          "이로운": 2,
+          "유하린": 1,
+          "김한별": 1,
+          "김선웅": 1,
+          "김민지": 1,
+          "문지완": 1,
+          "김민재": 1,
+          "오하영": 1,
+          "박찬율": 1,
+          "이재민": 1,
+          "문수아": 1,
+          "김재현": 1,
+          "황다은": 1,
+          "김사랑": 1,
+          "김도윤": 1,
+          "오하은": 1
+        },
+        "partial": true,
+        "partialNote": "3/18 기준 실적"
+      },
+      "3": {
+        "total": 29,
+        "reg": 18,
+        "gen": 11,
+        "perChild": {
+          "김민지": 2,
+          "김사랑": 1,
+          "김한별": 2,
+          "김민재": 2,
+          "유하린": 2,
+          "이로운": 2,
+          "김영진": 2,
+          "김선웅": 2,
+          "이지후": 1,
+          "문지완": 2,
+          "강석현": 1,
+          "문수아": 1,
+          "이재민": 1,
+          "오하영": 2,
+          "황다은": 1,
+          "김도윤": 1,
+          "김재현": 1,
+          "강예림": 1,
+          "박찬율": 1,
+          "오하은": 1
+        }
+      }
+    }
+  },
+  "AVAIL": {
+    "김영진": {
+      "type": "정기",
+      "admit": "",
+      "discharge": "",
+      "preferDay": 1,
+      "preferTime": 16,
+      "slots": {
+        "0": [
+          16,
+          18
+        ],
+        "1": [
+          16,
+          18
+        ],
+        "2": [
+          16,
+          18
+        ],
+        "3": [
+          16,
+          18
+        ],
+        "4": [
+          16,
+          18
+        ]
+      }
+    },
+    "이로운": {
+      "type": "정기",
+      "admit": "",
+      "discharge": "",
+      "preferDay": 0,
+      "preferTime": 18,
+      "slots": {
+        "0": [
+          18
+        ],
+        "1": [
+          18
+        ],
+        "2": [
+          18
+        ],
+        "3": [
+          18
+        ],
+        "4": []
+      }
+    },
+    "유하린": {
+      "type": "정기",
+      "admit": "",
+      "discharge": "",
+      "preferDay": 3,
+      "preferTime": 18,
+      "slots": {
+        "0": [
+          16,
+          18
+        ],
+        "1": [
+          16,
+          18
+        ],
+        "2": [
+          16,
+          18
+        ],
+        "3": [
+          16,
+          18
+        ],
+        "4": [
+          16,
+          18
+        ]
+      }
+    },
+    "김한별": {
+      "type": "정기",
+      "admit": "",
+      "discharge": "",
+      "preferDay": 3,
+      "preferTime": 18,
+      "slots": {
+        "0": [],
+        "1": [
+          18
+        ],
+        "2": [
+          16,
+          18
+        ],
+        "3": [
+          18
+        ],
+        "4": [
+          16,
+          18
+        ]
+      }
+    },
+    "김선웅": {
+      "type": "정기",
+      "admit": "",
+      "discharge": "",
+      "preferDay": 1,
+      "preferTime": 18,
+      "slots": {
+        "0": [
+          18
+        ],
+        "1": [
+          18
+        ],
+        "2": [
+          18
+        ],
+        "3": [
+          18
+        ],
+        "4": [
+          18
+        ]
+      }
+    },
+    "김민지": {
+      "type": "정기",
+      "admit": "",
+      "discharge": "",
+      "preferDay": 2,
+      "preferTime": 18,
+      "slots": {
+        "0": [
+          16,
+          18
+        ],
+        "1": [
+          16,
+          18
+        ],
+        "2": [
+          16,
+          18
+        ],
+        "3": [
+          16,
+          18
+        ],
+        "4": [
+          16,
+          18
+        ]
+      }
+    },
+    "문지완": {
+      "type": "정기",
+      "admit": "",
+      "discharge": "",
+      "preferDay": 3,
+      "preferTime": 18,
+      "slots": {
+        "0": [
+          18
+        ],
+        "1": [
+          18
+        ],
+        "2": [
+          16
+        ],
+        "3": [
+          16,
+          18
+        ],
+        "4": [
+          16,
+          18
+        ]
+      }
+    },
+    "김민재": {
+      "type": "정기",
+      "admit": "",
+      "discharge": "",
+      "preferDay": 4,
+      "preferTime": 16,
+      "slots": {
+        "0": [
+          18
+        ],
+        "1": [
+          18
+        ],
+        "2": [
+          18
+        ],
+        "3": [
+          18
+        ],
+        "4": [
+          16,
+          18
+        ]
+      }
+    },
+    "오하영": {
+      "type": "정기",
+      "admit": "",
+      "discharge": "",
+      "preferDay": 4,
+      "preferTime": 18,
+      "slots": {
+        "0": [
+          18
+        ],
+        "1": [],
+        "2": [],
+        "3": [
+          18
+        ],
+        "4": [
+          18
+        ]
+      }
+    },
+    "박찬율": {
+      "type": "일반",
+      "admit": "",
+      "discharge": "",
+      "preferDay": null,
+      "preferTime": null,
+      "slots": {
+        "0": [
+          18
+        ],
+        "1": [
+          18
+        ],
+        "2": [
+          18
+        ],
+        "3": [
+          18
+        ],
+        "4": [
+          18
+        ]
+      }
+    },
+    "이재민": {
+      "type": "일반",
+      "admit": "",
+      "discharge": "",
+      "preferDay": null,
+      "preferTime": null,
+      "slots": {
+        "0": [
+          18
+        ],
+        "1": [
+          18
+        ],
+        "2": [
+          18
+        ],
+        "3": [],
+        "4": [
+          16,
+          18
+        ]
+      }
+    },
+    "문수아": {
+      "type": "일반",
+      "admit": "",
+      "discharge": "",
+      "preferDay": null,
+      "preferTime": null,
+      "slots": {
+        "0": [
+          18
+        ],
+        "1": [],
+        "2": [
+          18
+        ],
+        "3": [
+          18
+        ],
+        "4": []
+      }
+    },
+    "김재현": {
+      "type": "일반",
+      "admit": "",
+      "discharge": "",
+      "preferDay": null,
+      "preferTime": null,
+      "slots": {
+        "0": [
+          16
+        ],
+        "1": [
+          18
+        ],
+        "2": [
+          16
+        ],
+        "3": [
+          18
+        ],
+        "4": [
+          18
+        ]
+      }
+    },
+    "강예림": {
+      "type": "일반",
+      "admit": "",
+      "discharge": "",
+      "preferDay": null,
+      "preferTime": null,
+      "slots": {
+        "0": [
+          18
+        ],
+        "1": [
+          16
+        ],
+        "2": [
+          16,
+          18
+        ],
+        "3": [
+          18
+        ],
+        "4": [
+          16,
+          18
+        ]
+      }
+    },
+    "강석현": {
+      "type": "일반",
+      "admit": "",
+      "discharge": "",
+      "preferDay": null,
+      "preferTime": null,
+      "slots": {
+        "0": [
+          18
+        ],
+        "1": [
+          18
+        ],
+        "2": [
+          18
+        ],
+        "3": [
+          18
+        ],
+        "4": [
+          18
+        ]
+      }
+    },
+    "황다은": {
+      "type": "일반",
+      "admit": "",
+      "discharge": "",
+      "preferDay": null,
+      "preferTime": null,
+      "slots": {
+        "0": [],
+        "1": [
+          18
+        ],
+        "2": [
+          18
+        ],
+        "3": [
+          18
+        ],
+        "4": [
+          18
+        ]
+      }
+    },
+    "김사랑": {
+      "type": "일반",
+      "admit": "",
+      "discharge": "",
+      "preferDay": null,
+      "preferTime": null,
+      "slots": {
+        "0": [],
+        "1": [],
+        "2": [],
+        "3": [
+          16
+        ],
+        "4": [
+          18
+        ]
+      }
+    },
+    "김도윤": {
+      "type": "일반",
+      "admit": "",
+      "discharge": "",
+      "preferDay": null,
+      "preferTime": null,
+      "slots": {
+        "0": [
+          18
+        ],
+        "1": [
+          18
+        ],
+        "2": [
+          18
+        ],
+        "3": [
+          16
+        ],
+        "4": [
+          18
+        ]
+      }
+    },
+    "이지후": {
+      "type": "일반",
+      "admit": "",
+      "discharge": "",
+      "preferDay": null,
+      "preferTime": null,
+      "slots": {
+        "0": [
+          18
+        ],
+        "1": [
+          18
+        ],
+        "2": [
+          18
+        ],
+        "3": [
+          16,
+          18
+        ],
+        "4": [
+          18
+        ]
+      }
+    },
+    "오하은": {
+      "type": "일반",
+      "admit": "",
+      "discharge": "",
+      "preferDay": null,
+      "preferTime": null,
+      "slots": {
+        "0": [
+          16,
+          18
+        ],
+        "1": [
+          16,
+          18
+        ],
+        "2": [
+          16,
+          18
+        ],
+        "3": [
+          16,
+          18
+        ],
+        "4": [
+          16,
+          18
+        ]
+      }
+    },
+    "김우빈": {
+      "type": "정기",
+      "admit": "",
+      "discharge": "",
+      "preferDay": 2,
+      "preferTime": 18,
+      "slots": {
+        "0": [
+          16,
+          18
+        ],
+        "1": [
+          16,
+          18
+        ],
+        "2": [
+          16,
+          18
+        ],
+        "3": [
+          16,
+          18
+        ],
+        "4": [
+          16,
+          18
+        ]
+      }
+    },
+    "김현진": {
+      "type": "정기",
+      "admit": "",
+      "discharge": "",
+      "preferDay": 4,
+      "preferTime": 18,
+      "slots": {
+        "0": [
+          16,
+          18
+        ],
+        "1": [
+          18
+        ],
+        "2": [
+          16,
+          18
+        ],
+        "3": [
+          18
+        ],
+        "4": [
+          18
+        ]
+      }
+    }
+  },
+  "curYear": 2026,
+  "curMonth": 3,
+  "generatedMonths": [
+    "2026-2",
+    "2026-3",
+    "2026-1",
+    "2026-0",
+    "2026-4"
+  ],
+  "blockedDates": [
+    [
+      "2026-3-10",
+      "연가"
+    ],
+    [
+      "2026-3-28",
+      "영유아분과 특화pg"
+    ]
+  ],
+  "overallData": [
+    {
+      "name": "이로운",
+      "grade": "초등2",
+      "room": [
+        "2/14",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "김재현",
+      "grade": "초등3",
+      "room": [
+        "2/26",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "문지완",
+      "grade": "초등3",
+      "room": [
+        "2월",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "김영진",
+      "grade": "초등4",
+      "room": [
+        "1/25",
+        "3/14",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "김도윤",
+      "grade": "초등4",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "김선웅",
+      "grade": "초등1",
+      "room": [
+        "2/14",
+        "3/16",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "김민재",
+      "grade": "미취학",
+      "room": [
+        "1/24",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "오하영",
+      "grade": "초등1",
+      "room": [
+        "3/14",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "문수아",
+      "grade": "초등1",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "유하린",
+      "grade": "미취학",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "김우빈",
+      "grade": "중등1",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "3/17",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "김용현",
+      "grade": "중등1",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "3/12",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "황민수",
+      "grade": "중등1",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "3/19",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "김현진",
+      "grade": "중등3",
+      "room": [
+        "2/25",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "박찬율",
+      "grade": "초등5",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "이지후",
+      "grade": "초등6",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "이재민",
+      "grade": "초등5",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "김한별",
+      "grade": "초등3",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "황다은",
+      "grade": "초등4",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "김사랑",
+      "grade": "초등4",
+      "room": [
+        "2/11",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "오하은",
+      "grade": "초등6",
+      "room": [
+        "2/15",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "김민지",
+      "grade": "초등6",
+      "room": [
+        "2/16",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "조희정",
+      "grade": "중등2",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "2/2",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "김현정",
+      "grade": "고등1",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "임재인",
+      "grade": "고등1",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "김경헌",
+      "grade": "고등2",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "윤우진",
+      "grade": "고등2",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "김주형",
+      "grade": "고등2",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "이상현",
+      "grade": "고등3",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "엄수경",
+      "grade": "고등3",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "장성일",
+      "grade": "2월졸업",
+      "room": [
+        "1/27",
+        "2/21",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "1/27",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": [
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "권율",
+      "grade": "2월졸업",
+      "room": [
+        "1/19",
+        "2/22",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "장정은",
+      "grade": "고등2",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "김가영",
+      "grade": "고등3",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": [
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "김혜진",
+      "grade": "2월졸업",
+      "room": [
+        "1/30",
+        "2/7",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "박수진",
+      "grade": "2월졸업",
+      "room": [
+        "1/23",
+        "2/7",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "이희망",
+      "grade": "2월졸업",
+      "room": [
+        "1/4",
+        "2/20",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "김연아",
+      "grade": "2월졸업",
+      "room": [
+        "1/14",
+        "2/9",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "name": "강예림",
+      "grade": "초등4",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "강석현",
+      "grade": "초등6",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "강예린",
+      "grade": "중등2",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    },
+    {
+      "name": "정요한",
+      "grade": "중등2",
+      "room": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "guide": [
+        "3/17",
+        "",
+        "",
+        ""
+      ],
+      "clinicManual": null
+    }
+  ]
+}
