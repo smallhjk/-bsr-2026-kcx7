@@ -1,0 +1,2459 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>월 상담일정 자동 생성기</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans KR',sans-serif;background:#f5f4f0;color:#1a1a1a;min-height:100vh}
+  .tab-bar{display:flex;background:#fff;border-bottom:1px solid #e0dfd8;padding:0 2rem;overflow-x:auto}
+  .tab{padding:14px 20px;font-size:13px;font-weight:500;color:#888;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;flex-shrink:0}
+  .tab.active{color:#3a5bd9;border-bottom-color:#3a5bd9}
+  .tab:hover:not(.active){color:#444}
+  .page{display:none;padding:1.5rem 2rem;max-width:1200px;margin:0 auto}
+  .page.active{display:block}
+  .btn{font-family:'Noto Sans KR',sans-serif;font-size:12px;font-weight:500;padding:7px 16px;border-radius:8px;cursor:pointer;transition:all .15s;border:1px solid #e0dfd8;background:#fff;color:#333}
+  .btn:hover{background:#f0efe8}
+  .btn-primary{background:#3a5bd9;color:#fff;border-color:#3a5bd9}
+  .btn-primary:hover{background:#2f4db8}
+  .btn-danger{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
+  .btn-sm{padding:4px 10px;font-size:11px}
+  .btn-regen{background:none;border:none;font-size:12px;color:#888;cursor:pointer;text-decoration:underline;font-family:'Noto Sans KR',sans-serif;padding:0}
+  .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:10px}
+  .page-title{font-size:17px;font-weight:600}
+  .page-sub{font-size:11px;color:#888;margin-top:2px}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:8px;margin-bottom:1.25rem}
+  .stat{background:#fff;border:1px solid #e0dfd8;border-radius:12px;padding:12px 14px}
+  .stat-label{font-size:11px;color:#888;margin-bottom:3px}
+  .stat-val{font-size:21px;font-weight:600}
+  .stat-val.warn{color:#c07a00}
+  .stat-val.blue{color:#3a5bd9}
+  .stat-val.green{color:#059669}
+  .cal-wrap{background:#fff;border:1px solid #e0dfd8;border-radius:14px;overflow:hidden}
+  .cal-head{display:grid;grid-template-columns:repeat(5,1fr);background:#f5f4f0;border-bottom:1px solid #e0dfd8}
+  .cal-head div{padding:9px;text-align:center;font-size:12px;font-weight:500;color:#666;border-right:1px solid #e0dfd8}
+  .cal-head div:last-child{border-right:none}
+  .cal-body{display:grid;grid-template-columns:repeat(5,1fr)}
+  .day-cell{border-right:1px solid #eeeee8;border-bottom:1px solid #eeeee8;min-height:110px;padding:7px;cursor:pointer;transition:background .1s;position:relative}
+  .day-cell:nth-child(5n){border-right:none}
+  .day-cell:hover{background:#faf9f5}
+  .day-cell.empty{cursor:default;background:#faf9f5}
+  .day-cell.today{background:#fffbeb}
+  .day-cell.past{background:#fafafa}
+  .day-num{font-size:11px;font-weight:600;color:#bbb;margin-bottom:4px;display:flex;align-items:center;gap:4px}
+  .day-num.today-num{color:#3a5bd9}
+  .today-dot{width:5px;height:5px;border-radius:50%;background:#3a5bd9;display:inline-block}
+  .slot{border-radius:5px;padding:3px 6px;font-size:10.5px;margin-bottom:3px;line-height:1.4;font-weight:500}
+  .slot-정기{background:#dbeafe;color:#1e40af}
+  .slot-일반{background:#d1fae5;color:#065f46}
+  .slot-warn{background:#fef3c7;color:#92400e}
+  .day-cell.blocked{background:#fff5f5;cursor:default}
+  .blocked-label{font-size:10px;color:#fca5a5;font-weight:500;margin-top:4px}
+  .slot-cancelled{background:#fee2e2;color:#fca5a5;text-decoration:line-through}
+  .slot-manually-done{background:#dcfce7;color:#15803d;text-decoration:line-through}
+  .btn-done-slot{font-size:10px;padding:2px 8px;border-radius:4px;border:1px solid #86efac;background:#f0fdf4;color:#15803d;cursor:pointer;font-family:inherit;white-space:nowrap}
+  .btn-undone-slot{font-size:10px;padding:2px 8px;border-radius:4px;border:1px solid #86efac;background:#dcfce7;color:#15803d;cursor:pointer;font-family:inherit;white-space:nowrap}
+  .legend{display:flex;gap:16px;margin-top:1rem;flex-wrap:wrap}
+  .leg{display:flex;align-items:center;gap:5px;font-size:11px;color:#666}
+  .leg-dot{width:9px;height:9px;border-radius:3px}
+  /* MODAL */
+  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;align-items:center;justify-content:center}
+  .overlay.active{display:flex}
+  .modal-box{background:#fff;border-radius:16px;padding:1.5rem;min-width:300px;max-width:460px;max-height:88vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.12)}
+  .modal-title{font-size:15px;font-weight:600;margin-bottom:12px}
+  .badge{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:500;white-space:nowrap}
+  .badge-정기{background:#dbeafe;color:#1e40af}
+  .badge-일반{background:#d1fae5;color:#065f46}
+  .badge-warn{background:#fef3c7;color:#92400e}
+  .conflict-note{font-size:10px;color:#c07a00;width:100%;margin-top:2px}
+  .modal-close{margin-top:12px;width:100%;font-family:'Noto Sans KR',sans-serif;font-size:13px;padding:8px;border-radius:8px;border:1px solid #e0dfd8;background:#f5f4f0;cursor:pointer;font-weight:500}
+  /* MODAL 편집 */
+  .modal-item{padding:7px 0;border-bottom:1px solid #f0efe8;font-size:13px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .modal-item:last-of-type{border-bottom:none}
+  .modal-add-form{margin-top:12px;padding:12px;background:#f5f4f0;border-radius:10px;border:1px solid #e0dfd8}
+  .modal-add-title{font-size:12px;font-weight:600;color:#555;margin-bottom:8px}
+  .modal-add-row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+  .modal-select{font-family:'Noto Sans KR',sans-serif;font-size:12px;padding:5px 8px;border:1px solid #e0dfd8;border-radius:7px;background:#fff;outline:none}
+  .modal-select:focus{border-color:#3a5bd9}
+  .btn-cancel-slot{font-size:10px;padding:2px 8px;border-radius:4px;border:1px solid #fca5a5;background:#fff0f0;color:#dc2626;cursor:pointer;font-family:inherit;white-space:nowrap}
+  .btn-restore-slot{font-size:10px;padding:2px 8px;border-radius:4px;border:1px solid #bbf7d0;background:#f0fdf4;color:#059669;cursor:pointer;font-family:inherit;white-space:nowrap}
+  .btn-delete-slot{font-size:10px;padding:2px 8px;border-radius:4px;border:1px solid #e0dfd8;background:#f5f4f0;color:#888;cursor:pointer;font-family:inherit;white-space:nowrap}
+  .slot-actions{display:flex;gap:4px;margin-left:auto}
+  /* STATS PAGE */
+  .stats-section{margin-bottom:2rem}
+  .section-title{font-size:14px;font-weight:600;color:#333;margin-bottom:1rem;padding-bottom:8px;border-bottom:1px solid #e0dfd8}
+  .annual-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:1.5rem}
+  .annual-card{background:#fff;border:1px solid #e0dfd8;border-radius:14px;padding:16px 18px}
+  .annual-card-label{font-size:11px;color:#888;margin-bottom:6px}
+  .annual-card-val{font-size:28px;font-weight:600;line-height:1}
+  .annual-card-sub{font-size:11px;color:#aaa;margin-top:4px}
+  .annual-card.highlight{border-color:#93c5fd;background:#eff6ff}
+  .annual-card.highlight .annual-card-val{color:#1e40af}
+  .annual-card.green-card{border-color:#6ee7b7;background:#ecfdf5}
+  .annual-card.green-card .annual-card-val{color:#059669}
+  .trend-wrap{background:#fff;border:1px solid #e0dfd8;border-radius:14px;padding:1.25rem}
+  .trend-bars{display:flex;align-items:flex-end;gap:5px;height:140px;margin-bottom:8px}
+  .trend-bar-col{display:flex;flex-direction:column;align-items:center;flex:1;height:100%;justify-content:flex-end;gap:3px}
+  .trend-bar{width:100%;border-radius:4px 4px 0 0;min-height:2px;position:relative}
+  .trend-bar-val{font-size:10px;color:#555;font-weight:500}
+  .trend-bar-label{font-size:10px;color:#aaa}
+  .child-stats-wrap{background:#fff;border:1px solid #e0dfd8;border-radius:14px;overflow:hidden}
+  .prog-wrap{background:#f0efe8;border-radius:4px;height:8px;overflow:hidden;min-width:60px}
+  .prog-bar{height:100%;border-radius:4px;background:#3a5bd9}
+  .prog-bar.done{background:#10b981}
+  .prog-bar.low{background:#f59e0b}
+  .year-selector{display:flex;align-items:center;gap:8px}
+  .year-selector button{background:none;border:1px solid #e0dfd8;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:13px;font-family:'Noto Sans KR',sans-serif}
+  .year-selector span{font-size:14px;font-weight:600;min-width:60px;text-align:center}
+  /* progress banner */
+  .progress-banner{background:#fff;border:1px solid #e0dfd8;border-radius:12px;padding:14px 18px;margin-bottom:1.25rem;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+  .pb-item{display:flex;flex-direction:column;gap:3px;min-width:120px}
+  .pb-label{font-size:11px;color:#888}
+  .pb-val{font-size:15px;font-weight:600}
+  .pb-prog{flex:1;min-width:200px}
+  .pb-bar-wrap{background:#f0efe8;border-radius:6px;height:10px;overflow:hidden;margin-top:4px}
+  .pb-bar{height:100%;border-radius:6px;background:#3a5bd9;transition:width .4s}
+  /* EDITOR */
+  .editor-intro{font-size:13px;color:#555;margin-bottom:1.25rem;line-height:1.8;background:#fff;border:1px solid #e0dfd8;border-radius:10px;padding:12px 16px}
+  .editor-intro strong{color:#3a5bd9}
+  .tab-group-label{font-size:11px;color:#aaa;margin:10px 0 4px;width:100%}
+  .child-tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:4px}
+  .child-tab{font-size:12px;padding:5px 12px;border-radius:20px;border:1px solid #e0dfd8;background:#fff;cursor:pointer;font-family:'Noto Sans KR',sans-serif;color:#555;transition:all .12s}
+  .child-tab:hover{border-color:#3a5bd9;color:#3a5bd9}
+  .child-tab.active{background:#3a5bd9;color:#fff;border-color:#3a5bd9}
+  .child-tab.type-일반{border-style:dashed}
+  .child-tab.inactive{opacity:.4;text-decoration:line-through}
+  .editor-card{background:#fff;border:1px solid #e0dfd8;border-radius:14px;padding:1.25rem}
+  .date-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.25rem;padding:14px;background:#faf9f5;border-radius:10px;border:1px solid #e0dfd8}
+  .date-field{display:flex;flex-direction:column;gap:4px}
+  .date-label{font-size:11px;font-weight:500;color:#555}
+  .date-input{font-family:'Noto Sans KR',sans-serif;font-size:12px;padding:6px 8px;border:1px solid #e0dfd8;border-radius:7px;outline:none;background:#fff}
+  .date-input:focus{border-color:#3a5bd9}
+  .date-hint{font-size:10px;color:#aaa;margin-top:2px}
+  .status-row{display:flex;align-items:center;gap:6px;margin-top:4px}
+  .status-dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+  .preferred-section{margin-bottom:1.25rem;padding:14px;background:#f0f4ff;border-radius:10px;border:1px solid #c7d7f8}
+  .preferred-title{font-size:12px;font-weight:600;color:#3a5bd9;margin-bottom:4px}
+  .preferred-desc{font-size:11px;color:#6b82c9;margin-bottom:10px;line-height:1.6}
+  .preferred-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+  .preferred-day{display:flex;flex-direction:column;align-items:center;gap:4px}
+  .preferred-day-label{font-size:11px;color:#555;font-weight:500}
+  .time-btn{font-size:11px;padding:5px 4px;border-radius:6px;border:1px solid #e0dfd8;background:#fff;cursor:pointer;font-family:'Noto Sans KR',sans-serif;color:#888;transition:all .12s;text-align:center;min-width:52px}
+  .time-btn.selected{background:#3a5bd9;color:#fff;border-color:#3a5bd9}
+  .auto-badge{font-size:10px;padding:2px 8px;border-radius:10px;background:#e0e7ff;color:#4338ca;font-weight:500}
+  .avail-grid{display:grid;grid-template-columns:auto repeat(5,1fr);gap:6px;align-items:center;margin-bottom:1.25rem}
+  .avail-header{font-size:12px;font-weight:500;text-align:center;color:#666;padding:4px}
+  .avail-time-label{font-size:12px;color:#555;font-weight:500;padding:4px 8px 4px 0}
+  .avail-toggle{width:100%;padding:8px 4px;border-radius:8px;border:1px solid #e0dfd8;background:#f5f4f0;cursor:pointer;font-size:12px;font-family:'Noto Sans KR',sans-serif;color:#888;transition:all .15s;text-align:center}
+  .avail-toggle.on{background:#dbeafe;border-color:#93c5fd;color:#1e40af;font-weight:500}
+  .editor-actions{display:flex;gap:8px;margin-top:1rem;flex-wrap:wrap}
+  .save-notice{font-size:11px;color:#3a5bd9;padding:6px 10px;background:#eff6ff;border-radius:6px;margin-top:8px;display:none}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th{padding:9px 12px;text-align:left;background:#f5f4f0;border-bottom:1px solid #e0dfd8;font-weight:500;color:#555}
+  th.center{text-align:center}
+  td{padding:8px 12px;border-bottom:1px solid #eeeee8;color:#333}
+  td.center{text-align:center}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:#faf9f5}
+  tr.row-inactive td{color:#ccc}
+  .avail-cell-ok{color:#065f46;font-weight:500;text-align:center}
+  .avail-cell-no{color:#e5e7eb;text-align:center}
+  .child-list-wrap{background:#fff;border:1px solid #e0dfd8;border-radius:14px;overflow:hidden;margin-top:1.25rem}
+  .child-list-title{font-size:13px;font-weight:600;padding:12px 16px;background:#f5f4f0;border-bottom:1px solid #e0dfd8;color:#444;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+  .filter-row{display:flex;gap:6px}
+  .filter-btn{font-size:11px;padding:4px 12px;border-radius:16px;border:1px solid #e0dfd8;background:#fff;cursor:pointer;font-family:'Noto Sans KR',sans-serif;color:#666}
+  .filter-btn.active{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+  .add-form{background:#fff;border:1px solid #e0dfd8;border-radius:14px;padding:1.25rem;margin-top:1.25rem}
+  .add-form-title{font-size:13px;font-weight:600;margin-bottom:1rem;color:#444}
+  .form-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-bottom:4px}
+  .form-group{display:flex;flex-direction:column;gap:4px}
+  .form-label{font-size:11px;color:#666;font-weight:500}
+  .form-input{font-family:'Noto Sans KR',sans-serif;font-size:13px;padding:7px 10px;border:1px solid #e0dfd8;border-radius:8px;outline:none;width:120px}
+  .form-input:focus{border-color:#3a5bd9}
+  .form-select{font-family:'Noto Sans KR',sans-serif;font-size:13px;padding:7px 10px;border:1px solid #e0dfd8;border-radius:8px;background:#fff}
+  @media print{
+    body{background:#fff}
+    .tab-bar,.page-header button,.btn,.btn-primary,.btn-regen,.legend,.progress-banner{display:none!important}
+    .page{display:none!important;padding:0;max-width:100%}
+    .page.active{display:block!important}
+    .no-print{display:none!important}
+    .stats-section{display:none!important}
+    #overall-add-form{display:none!important}
+    .page-header{margin-bottom:8px}
+    table{font-size:10px}
+    .print-header{display:block!important}
+    .cal-wrap{border:1px solid #ccc;border-radius:0}
+    .day-cell{min-height:80px;padding:5px}
+    .slot{font-size:9px;padding:2px 4px}
+    .page-title{font-size:15px}
+  }
+  .print-header{display:none;margin-bottom:12px}
+  .print-header-title{font-size:18px;font-weight:700;margin-bottom:2px}
+  .print-header-sub{font-size:11px;color:#888}
+  .autosave-toast{position:fixed;bottom:24px;right:24px;background:#1a1a1a;color:#fff;font-size:12px;padding:8px 16px;border-radius:20px;opacity:0;transition:opacity .3s;pointer-events:none;z-index:9999;font-family:'Noto Sans KR',sans-serif}
+  .autosave-toast.show{opacity:1}
+</style>
+</head>
+<body>
+<style>
+  #pw-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:#f5f4f0;font-family:'Noto Sans KR',sans-serif;position:fixed;inset:0;z-index:9999}
+  #pw-box{background:#fff;border:1px solid #e0dfd8;border-radius:16px;padding:2rem;width:300px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+  #pw-title{font-size:18px;font-weight:600;margin-bottom:6px}
+  #pw-sub{font-size:12px;color:#888;margin-bottom:20px}
+  #pw-btn{width:100%;padding:10px;background:#3a5bd9;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Noto Sans KR',sans-serif;margin-top:10px}
+  #pw-btn:hover{background:#2f4db8}
+  #pw-error{font-size:12px;color:#dc2626;margin-top:8px;min-height:18px}
+</style>
+<div id="pw-screen">
+  <div id="pw-box">
+    <div id="pw-title">🔒 상담일정 관리</div>
+    <div id="pw-sub">접속 비밀번호를 입력해 주세요</div>
+    <div style="position:relative">
+      <input id="pw-input" type="password" placeholder="비밀번호" onkeydown="if(event.key==='Enter')checkPw()" style="width:100%;font-family:'Noto Sans KR',sans-serif;font-size:14px;padding:10px 40px 10px 10px;border:1px solid #e0dfd8;border-radius:8px;outline:none;text-align:center;letter-spacing:2px;box-sizing:border-box"/>
+      <button onclick="togglePw()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:16px;padding:0">👁️</button>
+    </div>
+    <button id="pw-btn" onclick="checkPw()">확인</button>
+    <div id="pw-error"></div>
+  </div>
+</div>
+<script>
+function togglePw(){
+  const i=document.getElementById('pw-input');
+  i.type=i.type==='password'?'text':'password';
+}
+function checkPw(){
+  if(document.getElementById('pw-input').value==='bor4450'){
+    document.getElementById('pw-screen').style.display='none';
+  } else {
+    document.getElementById('pw-error').textContent='비밀번호가 틀렸어요. 다시 입력해 주세요.';
+    document.getElementById('pw-input').value='';
+    document.getElementById('pw-input').focus();
+  }
+}
+</script>
+
+<div class="tab-bar">
+  <div class="tab active" onclick="showTab('schedule')">📅 월 상담일정</div>
+  <div class="tab" onclick="showTab('editor')">✏️ 아동 관리</div>
+  <div class="tab" onclick="showTab('stats')">📊 통계</div>
+  <div class="tab" onclick="showTab('overall')">📋 전체 상담 현황</div>
+</div>
+
+<!-- ══ PAGE 1 ══ -->
+<div class="page active" id="page-schedule">
+  <div class="page-header">
+    <div>
+      <div class="page-title">월 상담일정 자동 생성기</div>
+      <div class="page-sub">정기상담 격주 동일 요일 · 일반상담 월 1회 · 16:00 / 18:00</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #e0dfd8;border-radius:10px;padding:5px 10px">
+        <button class="btn btn-sm" style="border:none;background:none" onclick="changeMonth(-1)">◀</button>
+        <span id="month-label" style="font-size:13px;font-weight:600;min-width:90px;text-align:center"></span>
+        <button class="btn btn-sm" style="border:none;background:none" onclick="changeMonth(1)">▶</button>
+      </div>
+      <button class="btn-regen" onclick="confirmRegen()">↺ 재배정</button>
+      <button class="btn" id="undo-btn" onclick="undoRegen()" style="display:none;color:#c07a00;border-color:#fcd34d;background:#fffbeb">↩ 되돌리기</button>
+      <button class="btn" onclick="exportJSON()">💾 저장</button>
+      <label class="btn" style="cursor:pointer">📂 불러오기<input type="file" accept=".json" onchange="importJSON(event)" style="display:none"></label>
+      <button class="btn" onclick="resetApp()" style="color:#c00;border-color:#fca5a5">🔄 초기화</button>
+      <button class="btn" onclick="printSchedule()">🖨️ 인쇄</button>
+    </div>
+  </div>
+  <!-- 인쇄용 헤더 -->
+  <div class="print-header" id="print-header">
+    <div class="print-header-title" id="print-header-title"></div>
+    <div class="print-header-sub" id="print-header-sub"></div>
+  </div>
+  <!-- 진행 현황 배너 -->
+  <div class="progress-banner" id="progress-banner"></div>
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-label">집중 누계</div>
+      <div class="stat-val blue" id="s-reg-cum">-</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">개별 누계</div>
+      <div class="stat-val blue" id="s-gen-cum">-</div>
+    </div>
+    <div class="stat"><div class="stat-label">충돌 주의</div><div class="stat-val warn" id="s-warn">-</div></div>
+    <div class="stat"><div class="stat-label">상담 아동</div><div class="stat-val" id="s-active">-</div></div>
+  </div>
+  <div class="cal-wrap">
+    <div class="cal-head"><div>월요일</div><div>화요일</div><div>수요일</div><div>목요일</div><div>금요일</div></div>
+    <div class="cal-body" id="cal-body"></div>
+  </div>
+  <div class="legend">
+    <div class="leg"><div class="leg-dot" style="background:#dbeafe"></div>정기상담 — 격주 동일 요일</div>
+    <div class="leg"><div class="leg-dot" style="background:#d1fae5"></div>일반상담 (월 1회)</div>
+    <div class="leg"><div class="leg-dot" style="background:#fef3c7"></div>외부일정 충돌 주의</div>
+    <div class="leg"><div class="leg-dot" style="background:#f3f4f6"></div>완료 (과거)</div>
+    <div class="leg"><div class="leg-dot" style="background:#dcfce7"></div>완료 ✓</div>
+    <div class="leg"><div class="leg-dot" style="background:#fee2e2"></div>취소</div>
+  </div>
+</div>
+
+<!-- ══ PAGE 2 ══ -->
+<div class="page" id="page-stats">
+  <div class="page-header">
+    <div><div class="page-title">상담 통계</div><div class="page-sub">실시간 완료 기준 · 날짜 경과 자동 반영</div></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <div class="year-selector">
+        <button onclick="changeStatsYear(-1)">◀</button>
+        <span id="stats-year-label"></span>
+        <button onclick="changeStatsYear(1)">▶</button>
+      </div>
+      <button class="btn" onclick="window.print()">🖨️ 인쇄</button>
+    </div>
+  </div>
+
+  <!-- 연간 요약 -->
+  <div class="stats-section">
+    <div class="section-title">연간 요약</div>
+    <!-- JS 참조용 숨김 요소 -->
+    <span id="an-total" style="display:none"></span>
+    <span id="an-reg" style="display:none"></span>
+    <span id="an-gen" style="display:none"></span>
+    <span id="an-avg" style="display:none"></span>
+    <span id="an-rate" style="display:none"></span>
+    <span id="an-year" style="display:none"></span>
+    <span id="an-mar-done" style="display:none"></span>
+    <span id="an-mar-done-sub" style="display:none"></span>
+
+    <!-- 연간 진행률 + 집중/개별 비율 + 연도별 비교 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+
+      <!-- 연간 진행률 -->
+      <div class="annual-card" style="grid-column:1/-1" id="annual-progress-card">
+        <div class="annual-card-label" style="margin-bottom:10px">연간 진행률</div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+          <div style="flex:1;min-width:200px">
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:#555;margin-bottom:5px">
+              <span>전체 <strong id="ap-done">0</strong>회 완료</span>
+              <span>목표 <strong id="ap-plan">0</strong>회</span>
+            </div>
+            <div style="background:#f0efe8;border-radius:6px;height:12px;overflow:hidden">
+              <div id="ap-bar" style="height:100%;border-radius:6px;background:#3a5bd9;transition:width .4s;width:0%"></div>
+            </div>
+            <div style="font-size:10px;color:#aaa;margin-top:4px" id="ap-sub"></div>
+          </div>
+          <div style="display:flex;gap:12px;flex-shrink:0">
+            <div style="text-align:center">
+              <div style="font-size:22px;font-weight:700;color:#3a5bd9" id="ap-pct">0%</div>
+              <div style="font-size:10px;color:#aaa">달성률</div>
+            </div>
+            <div style="text-align:center">
+              <div style="font-size:22px;font-weight:700;color:#f59e0b" id="ap-remain">0</div>
+              <div style="font-size:10px;color:#aaa">잔여 회</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 집중/개별 비율 -->
+      <div class="annual-card" id="ratio-card">
+        <div class="annual-card-label" style="margin-bottom:10px">집중 / 개별 비율</div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <div style="flex:1">
+            <div id="ratio-bar-wrap" style="height:14px;border-radius:7px;overflow:hidden;background:#f0efe8;display:flex">
+              <div id="ratio-reg-bar" style="background:#3a5bd9;height:100%;transition:width .4s"></div>
+              <div id="ratio-gen-bar" style="background:#10b981;height:100%;transition:width .4s"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:#888">
+              <span>집중 <span id="ratio-reg-pct" style="color:#3a5bd9;font-weight:600"></span></span>
+              <span>개별 <span id="ratio-gen-pct" style="color:#10b981;font-weight:600"></span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 연도별 비교 -->
+      <div class="annual-card" id="year-compare-card">
+        <div class="annual-card-label" style="margin-bottom:10px">연도별 총 완료 비교</div>
+        <div id="year-compare-bars" style="display:flex;align-items:flex-end;gap:8px;height:60px"></div>
+      </div>
+    </div>
+  </div>
+  <div class="stats-section">
+    <div class="section-title">아동별 상담 완료 현황 <span style="font-size:11px;font-weight:400;color:#aaa">— 실시간 완료 기준</span></div>
+    <div class="child-stats-wrap">
+      <table>
+        <thead><tr>
+          <th>아동명</th><th class="center">유형</th><th class="center">상태</th>
+          <th class="center">재원 기간</th><th class="center">월 목표</th>
+          <th class="center">연간 목표</th><th class="center">연간 실적</th><th style="min-width:100px">달성률</th>
+        </tr></thead>
+        <tbody id="child-stats-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+  <!-- 월 실적 -->
+  <div class="stats-section">
+    <div class="section-title">월별 실적 <span style="font-size:11px;font-weight:400;color:#aaa">— 달력 기준 실시간 자동집계</span></div>
+    <div id="monthly-log-editor" style="overflow-x:auto">
+      <table style="font-size:12px;border-collapse:collapse;width:100%;max-width:500px">
+        <thead>
+          <tr style="background:#f5f4f0">
+            <th style="padding:8px;border:1px solid #e0dfd8;min-width:60px;text-align:center">월</th>
+            <th style="padding:8px;border:1px solid #e0dfd8;min-width:100px;text-align:center;color:#3a5bd9">집중(회)</th>
+            <th style="padding:8px;border:1px solid #e0dfd8;min-width:100px;text-align:center;color:#10b981">개별(회)</th>
+            <th style="padding:8px;border:1px solid #e0dfd8;min-width:80px;text-align:center">합계</th>
+            <th style="padding:8px;border:1px solid #e0dfd8;min-width:60px;text-align:center">비고</th>
+          </tr>
+        </thead>
+        <tbody id="monthly-log-tbody"></tbody>
+        <tfoot><tr id="monthly-log-tfoot"></tr></tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE 3 ══ -->
+<div class="page" id="page-editor">
+  <div class="page-header">
+    <div><div class="page-title">아동 관리</div><div class="page-sub">입퇴소일 · 선호 요일 · 상담 가능 시간 관리</div></div>
+  </div>
+  <div class="editor-intro">
+    <strong>정기상담 선호 요일</strong> — 요일·시간 지정 시 격주 같은 요일 고정 배정. 미지정 시 자동 선택.<br>
+    <strong>입퇴소 처리</strong> — 퇴소일 입력 시 자동 비활성화. 통계 목표도 재원 기간만 반영.<br>
+    <strong>일정 수정</strong> — 가능/불가 토글 → 저장 → 월 상담일정 탭에서 ↺ 재배정
+  </div>
+  <div style="margin-bottom:8px">
+    <div class="tab-group-label" style="margin-top:0">재원 중</div>
+    <div class="child-tabs" id="child-tabs-active"></div>
+    <div class="tab-group-label">퇴소 / 비활성</div>
+    <div class="child-tabs" id="child-tabs-inactive"></div>
+  </div>
+  <div class="editor-card" id="editor-card"><div style="color:#aaa;font-size:13px">위에서 아동 이름을 선택하세요.</div></div>
+  <div class="add-form">
+    <div class="add-form-title">➕ 새 아동 추가</div>
+    <div class="form-row">
+      <div class="form-group"><div class="form-label">이름</div><input class="form-input" id="new-name" placeholder="홍길동"/></div>
+      <div class="form-group"><div class="form-label">상담 유형</div>
+        <select class="form-select" id="new-type"><option value="정기">정기 (월 2회 격주)</option><option value="일반">일반 (월 1회)</option></select>
+      </div>
+      <div class="form-group"><div class="form-label">입소일</div><input class="form-input" id="new-admit" type="date"/></div>
+      <button class="btn btn-primary" onclick="addChild()" style="align-self:flex-end">추가</button>
+    </div>
+    <div class="save-notice" id="add-notice">✓ 추가되었습니다.</div>
+  </div>
+  <div class="child-list-wrap">
+    <div class="child-list-title">
+      <span>전체 아동 목록</span>
+      <div class="filter-row">
+        <button class="filter-btn active" onclick="setFilter('all',this)">전체</button>
+        <button class="filter-btn" onclick="setFilter('active',this)">재원 중</button>
+        <button class="filter-btn" onclick="setFilter('inactive',this)">퇴소</button>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+    <table>
+      <thead><tr>
+        <th>이름</th><th class="center">유형</th><th class="center">입소일</th><th class="center">퇴소일</th>
+        <th class="center">상태</th><th class="center">선호요일</th>
+        <th class="center">월16</th><th class="center">월18</th><th class="center">화16</th><th class="center">화18</th>
+        <th class="center">수16</th><th class="center">수18</th><th class="center">목16</th><th class="center">목18</th>
+        <th class="center">금16</th><th class="center">금18</th><th class="center">관리</th>
+      </tr></thead>
+      <tbody id="child-tbody"></tbody>
+    </table>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE 4: 전체 상담 현황 ══ -->
+<div class="page" id="page-overall">
+  <div class="page-header">
+    <div><div class="page-title">전체 상담 현황</div><div class="page-sub">방 담당교사 · 임상심리상담원 · 상담지도원</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <select class="modal-select" id="overall-year" onchange="renderOverall()" style="font-size:13px;padding:6px 10px">
+        <option value="2026">2026년</option>
+        <option value="2025">2025년</option>
+      </select>
+      <button class="btn btn-primary" onclick="addOverallChild()">➕ 아동 추가</button>
+      <button class="btn" onclick="saveOverallJSON()">💾 저장</button>
+      <button class="btn" onclick="printOverall()">🖨️ 인쇄</button>
+    </div>
+  </div>
+
+  <!-- 연간 요약 -->
+  <div class="stats-section" style="margin-bottom:1.25rem">
+    <div class="section-title">연간 요약</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+      <!-- 전체 진행률 -->
+      <div class="annual-card" style="grid-column:1/-1">
+        <div class="annual-card-label" style="margin-bottom:10px">전체 상담 진행률</div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center">
+          <div style="flex:1;min-width:200px">
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:#555;margin-bottom:5px">
+              <span>전체 <strong id="ov-done">0</strong>회 완료</span>
+              <span>목표 <strong id="ov-plan">0</strong>회</span>
+            </div>
+            <div style="background:#f0efe8;border-radius:6px;height:12px;overflow:hidden">
+              <div id="ov-bar" style="height:100%;border-radius:6px;background:#3a5bd9;transition:width .4s;width:0%"></div>
+            </div>
+            <div style="font-size:10px;color:#aaa;margin-top:4px" id="ov-sub"></div>
+          </div>
+          <div style="display:flex;gap:16px;flex-shrink:0">
+            <div style="text-align:center">
+              <div style="font-size:22px;font-weight:700;color:#3a5bd9" id="ov-pct">0%</div>
+              <div style="font-size:10px;color:#aaa">달성률</div>
+            </div>
+            <div style="text-align:center">
+              <div style="font-size:22px;font-weight:700;color:#f59e0b" id="ov-remain">0</div>
+              <div style="font-size:10px;color:#aaa">잔여 회</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 유형별 비율 -->
+      <div class="annual-card">
+        <div class="annual-card-label" style="margin-bottom:10px">유형별 비율</div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px">
+              <span style="color:#1e40af">방 담당교사</span><span id="ov-room-pct" style="color:#1e40af;font-weight:600"></span>
+            </div>
+            <div style="background:#f0efe8;border-radius:4px;height:8px;overflow:hidden"><div id="ov-room-bar" style="height:100%;border-radius:4px;background:#3a5bd9;transition:width .4s"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px">
+              <span style="color:#059669">임상심리</span><span id="ov-clinic-pct" style="color:#059669;font-weight:600"></span>
+            </div>
+            <div style="background:#f0efe8;border-radius:4px;height:8px;overflow:hidden"><div id="ov-clinic-bar" style="height:100%;border-radius:4px;background:#10b981;transition:width .4s"></div></div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px">
+              <span style="color:#92400e">상담지도원</span><span id="ov-guide-pct" style="color:#92400e;font-weight:600"></span>
+            </div>
+            <div style="background:#f0efe8;border-radius:4px;height:8px;overflow:hidden"><div id="ov-guide-bar" style="height:100%;border-radius:4px;background:#f59e0b;transition:width .4s"></div></div>
+          </div>
+        </div>
+      </div>
+      <!-- 상담원별 합계 -->
+      <div class="annual-card">
+        <div class="annual-card-label" style="margin-bottom:10px">상담원별 합계</div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:11px;color:#555">방 담당교사</span>
+            <span id="ov-room-total" style="font-size:18px;font-weight:700;color:#1e40af">0</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:11px;color:#555">임상심리상담원</span>
+            <span id="ov-clinic-total" style="font-size:18px;font-weight:700;color:#059669">0</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:11px;color:#555">상담지도원</span>
+            <span id="ov-guide-total" style="font-size:18px;font-weight:700;color:#92400e">0</span>
+          </div>
+        </div>
+      </div>
+      <!-- 상담 아동 수 -->
+      <div class="annual-card">
+        <div class="annual-card-label">상담 참여 아동</div>
+        <div style="display:flex;align-items:baseline;gap:6px;margin-top:6px">
+          <div style="font-size:28px;font-weight:700;color:#3a5bd9" id="ov-child-cnt">0</div>
+          <div style="font-size:12px;color:#aaa">명</div>
+        </div>
+        <div style="font-size:10px;color:#aaa;margin-top:4px" id="ov-child-sub"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 아동 추가 폼 -->
+  <div class="add-form" id="overall-add-form" style="display:none;margin-bottom:1rem">
+    <div class="add-form-title">➕ 아동 추가</div>
+    <div class="form-row">
+      <div class="form-group"><div class="form-label">이름</div><input class="form-input" id="ov-name" placeholder="홍길동"/></div>
+      <div class="form-group"><div class="form-label">학년</div><input class="form-input" id="ov-grade" placeholder="초등3" style="width:80px"/></div>
+      <button class="btn btn-primary" onclick="saveOverallChild()" style="align-self:flex-end">추가</button>
+      <button class="btn" onclick="document.getElementById('overall-add-form').style.display='none'" style="align-self:flex-end">취소</button>
+    </div>
+  </div>
+
+  <!-- 현황 테이블 -->
+  <div style="overflow-x:auto">
+    <table id="overall-table" style="min-width:700px;font-size:12px;border-collapse:collapse;width:100%">
+      <thead>
+        <tr style="background:#f5f4f0" id="overall-top-header">
+          <th rowspan="2" style="padding:8px;border:1px solid #e0dfd8;min-width:70px;text-align:center">이름</th>
+          <th rowspan="2" style="padding:8px;border:1px solid #e0dfd8;min-width:55px;text-align:center">학년</th>
+          <th id="th-room" style="padding:8px;border:1px solid #e0dfd8;text-align:center;background:#dbeafe;color:#1e40af">
+            방 담당교사 상담 <button onclick="addOverallCol('room')" style="font-size:13px;font-weight:700;border:1px solid #93c5fd;border-radius:4px;background:#eff6ff;color:#3a5bd9;cursor:pointer;padding:0 5px;margin-left:6px">+</button>
+          </th>
+          <th rowspan="2" style="padding:8px;border:1px solid #e0dfd8;min-width:35px;text-align:center;background:#dbeafe;color:#1e40af">계</th>
+          <th colspan="2" rowspan="1" style="padding:8px;border:1px solid #e0dfd8;text-align:center;background:#d1fae5;color:#065f46">임상심리상담원</th>
+          <th id="th-guide" style="padding:8px;border:1px solid #e0dfd8;text-align:center;background:#fef3c7;color:#92400e">
+            상담지도원 상담 <button onclick="addOverallCol('guide')" style="font-size:13px;font-weight:700;border:1px solid #fcd34d;border-radius:4px;background:#fffbeb;color:#92400e;cursor:pointer;padding:0 5px;margin-left:6px">+</button>
+          </th>
+          <th rowspan="2" style="padding:8px;border:1px solid #e0dfd8;min-width:35px;text-align:center;background:#fef3c7;color:#92400e">계</th>
+          <th rowspan="2" style="padding:8px;border:1px solid #e0dfd8;min-width:45px;text-align:center;background:#f0fdf4;color:#15803d">총계</th>
+          <th rowspan="2" style="padding:8px;border:1px solid #e0dfd8;min-width:30px;text-align:center" class="no-print">삭제</th>
+        </tr>
+        <tr id="overall-date-header" style="background:#fafaf8"></tr>
+      </thead>
+      <tbody id="overall-tbody"></tbody>
+      <tfoot>
+        <tr id="overall-tfoot" style="background:#f5f4f0;font-weight:600"></tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+
+<div class="overlay" id="modal" onclick="handleOverlayClick(event)">
+  <div class="modal-box">
+    <div class="modal-title" id="modal-title"></div>
+    <div id="modal-list"></div>
+    <button class="modal-close" onclick="closeModal()">닫기</button>
+  </div>
+</div>
+
+<div class="autosave-toast" id="autosave-toast"></div>
+
+<script>
+/* ==========================================================
+   아동 상담일정 자동 생성기 — 관리자 가이드
+   ==========================================================
+
+   ■ 자주 수정하는 부분 (★ 표시 검색):
+     1. DEFAULT_AVAIL  — 아동 목록·가용 시간 설정
+     2. loadJanSchedule / loadFebSchedule / loadMarchSchedule / loadAprilSchedule
+                       — 월별 실제 일정 입력
+     3. BLOCKED_DATES  — 상담 불가 날짜 (연가·행사 등)
+     4. SEPARATE_PAIRS — 같은 날 상담 금지 아동 쌍
+     5. overallData    — 전체 현황표 초기 아동 데이터
+
+   ■ 새 달 일정 추가 방법:
+     loadXxxSchedule() 함수를 복사해 새 달로 수정 →
+     initApp() 안에 loadXxxSchedule() 호출 추가
+
+   ■ 아동 추가:
+     DEFAULT_AVAIL 에 항목 추가 → overallData 에도 추가
+     (앱 내 '아동 관리' 탭에서도 가능, 단 DEFAULT_AVAIL은 코드에 직접 추가해야 초기화 시 유지)
+
+   ■ 저장 방식:
+     - 브라우저 localStorage 자동저장 (같은 브라우저면 유지)
+     - 💾 저장 버튼 → JSON 파일 내보내기
+     - 📂 불러오기 버튼 → JSON 파일로 복원
+     (다른 PC에서 이어서 사용하려면 JSON 파일로 백업/복원)
+
+   ========================================================== */
+
+const TODAY = new Date(); TODAY.setHours(0,0,0,0); // 실제 오늘 날짜
+const WDS=['일','월','화','수','목','금','토'];
+const WD_NAMES=['월','화','수','목','금'];
+const TIMES=[16,18];
+const MN=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+
+// ★ 수정 포인트 1: 아동별 가용 시간 설정
+// type: '정기'(격주 2회) | '일반'(월 1회)
+// preferDay: 0=월 1=화 2=수 3=목 4=금 (null=자동)
+// preferTime: 16 | 18 (null=자동)
+// slots: 요일별 상담 가능 시간 배열 (0=월~4=금)
+const DEFAULT_AVAIL = {
+  // ── 정기상담 (격주 2회) ───────────────────────────────────────
+  // 김영진: 더수학 14시→, 금 피아노 19시 → 월~목 16시 이후, 금 16시 이후
+  '김영진': {type:'정기',admit:'',discharge:'',preferDay:1,preferTime:16,slots:{0:[16,18],1:[16,18],2:[16,18],3:[16,18],4:[16,18]}},
+  // 이로운: 화 태권도+더수학 15:15 → 화 16시 이후, 목 17:45씽크빅 후 18시, 금 언어치료+공의 16:30 이후
+  '이로운': {type:'정기',admit:'',discharge:'',preferDay:0,preferTime:18,slots:{0:[18],1:[18],2:[18],3:[18],4:[]}},
+  // 유하린: 미취학, 목 집으로 귀가 → 전 요일 16·18시 가능
+  '유하린': {type:'정기',admit:'',discharge:'',preferDay:3,preferTime:18,slots:{0:[16,18],1:[16,18],2:[16,18],3:[16,18],4:[16,18]}},
+  // 김한별: 월 미술, 화·목 방과후+태권도 15:30~16:50 → 화·목 18시, 수 16시 이후, 목 누리마루 합주 16시
+  '김한별': {type:'정기',admit:'',discharge:'',preferDay:3,preferTime:18,slots:{0:[],1:[18],2:[16,18],3:[18],4:[16,18]}},
+  // 김선웅: 화·수·목 미술학원+태권도 16:20 → 18시 이후
+  '김선웅': {type:'정기',admit:'',discharge:'',preferDay:1,preferTime:18,slots:{0:[18],1:[18],2:[18],3:[18],4:[18]}},
+  // 김민지: 별도 일정 없음 → 전 요일 16·18시 가능
+  '김민지': {type:'정기',admit:'',discharge:'',preferDay:2,preferTime:18,slots:{0:[16,18],1:[16,18],2:[16,18],3:[16,18],4:[16,18]}},
+  // 문지완: 화 누리마루 언어 16시, 수 1대1학습 18시, 목 미술+줄넘기 15시 → 화 18시, 수 16시, 목 16시, 금 16시
+  '문지완': {type:'정기',admit:'',discharge:'',preferDay:3,preferTime:18,slots:{0:[18],1:[18],2:[16],3:[16,18],4:[16,18]}},
+  // 김민재: 미취학(등하원 08:35/16:35) → 오후 16시 이후
+  '김민재': {type:'정기',admit:'',discharge:'',preferDay:4,preferTime:16,slots:{0:[18],1:[18],2:[18],3:[18],4:[16,18]}},
+  // 오하영: 화·수 돌봄→태권도→미술, 목 합주 16시·씽크빅 18~18:20 → 목 18시 이후, 금 미술 후 18시
+  '오하영': {type:'정기',admit:'',discharge:'',preferDay:4,preferTime:18,slots:{0:[18],1:[],2:[],3:[18],4:[18]}},
+  // ── 일반상담 (월 1회) ────────────────────────────────────────
+  // 박찬율: 더수학+pmp복싱 15:30~17:20 → 18시 이후
+  '박찬율': {type:'일반',admit:'',discharge:'',preferDay:null,preferTime:null,slots:{0:[18],1:[18],2:[18],3:[18],4:[18]}},
+  // 이재민: 목 16:40 합주 불가, 월~수 18시 이후, 금 15:40 더수학 후 16시 가능
+  '이재민': {type:'일반',admit:'',discharge:'',preferDay:null,preferTime:null,slots:{0:[18],1:[18],2:[18],3:[],4:[16,18]}},
+  // 문수아: 화 돌봄+태권도, 수·목 태권도+미술, 금 독서토론 19:30 → 수·목 18시 이후
+  '문수아': {type:'일반',admit:'',discharge:'',preferDay:null,preferTime:null,slots:{0:[18],1:[],2:[18],3:[18],4:[]}},
+  // 김재현: 월 19시 1대1학습, 화 16:10 미술학원, 수 18시 1대1학습, 목 16:40 음악합주, 금 16:10 성경이야기
+  '김재현': {type:'일반',admit:'',discharge:'',preferDay:null,preferTime:null,slots:{0:[16],1:[18],2:[16],3:[18],4:[18]}},
+  // 강예림: 화·수 방과후 14:40~16:00 → 수 16시, 화 17:50 나타 전 16시, 금 가능
+  '강예림': {type:'일반',admit:'',discharge:'',preferDay:null,preferTime:null,slots:{0:[18],1:[16],2:[16,18],3:[18],4:[16,18]}},
+  // 강석현: 더수학+pmp복싱 → 18시 이후
+  '강석현': {type:'일반',admit:'',discharge:'',preferDay:null,preferTime:null,slots:{0:[18],1:[18],2:[18],3:[18],4:[18]}},
+  // 황다은: 월 미술 불가, 화·수 방과후 14:40~16:00, 목 16:40합주+씽크빅 19:30, 금 성경이야기 16:30
+  '황다은': {type:'일반',admit:'',discharge:'',preferDay:null,preferTime:null,slots:{0:[],1:[18],2:[18],3:[18],4:[18]}},
+  // 김사랑: 더수학→태권도 매일, 목 씽크빅 19:45 → 목 16시(태권도 전), 금 16:30 이후 18시
+  '김사랑': {type:'일반',admit:'',discharge:'',preferDay:null,preferTime:null,slots:{0:[],1:[],2:[],3:[16],4:[18]}},
+  // 김도윤: 목 태권도 13:40~15:20+합주 16:40 → 목 16시(15:20~16:40), 금 나무야 인지 17:10 이후 18시
+  '김도윤': {type:'일반',admit:'',discharge:'',preferDay:null,preferTime:null,slots:{0:[18],1:[18],2:[18],3:[16],4:[18]}},
+  // 이지후: 목 19시 1:1학습 → 목 16~18시, 월·화·수·금 18시 이후
+  '이지후': {type:'일반',admit:'',discharge:'',preferDay:null,preferTime:null,slots:{0:[18],1:[18],2:[18],3:[16,18],4:[18]}},
+  // 오하은: 별도 일정 없음 → 전 요일 16·18시
+  '오하은': {type:'일반',admit:'',discharge:'',preferDay:null,preferTime:null,slots:{0:[16,18],1:[16,18],2:[16,18],3:[16,18],4:[16,18]}}
+};
+
+let AVAIL = JSON.parse(JSON.stringify(DEFAULT_AVAIL));
+let curYear=2026, curMonth=2; // 3월로 시작
+let statsYear=2026;
+let schedule={}, selectedChild=null, tableFilter='all';
+
+// ── 3월 일정 수동 세팅 (실제 수치 기반) ──────────────────────────
+// 3/18 기준 누계: 집중(정기) 47회, 개별(일반) 26회 = 73회
+// 3월 월계: 집중 11회, 개별 8회 = 19회
+// 1월 실적: 정기 18회, 일반 8회 (이미지 기반)
+// 2월 실적: 정기 18회, 일반 9회 (이미지 기반)
+const MAR_DONE_REG = 11;
+const MAR_DONE_GEN = 8;
+const PREV_REG = 36;  // 1~2월 집중 누적 (18+18)
+const PREV_GEN = 17;  // 1~2월 개별 누적 (8+9)
+
+// monthlyLog 초기화
+let monthlyLog = {
+  2026: {
+    // 1월 실적 (이미지 기반)
+    0: {
+      total: 27, reg: 18, gen: 9,
+      perChild: {
+        // 집중(정기) 9명 × 2회 = 18회
+        '이로운':2, '유하린':2, '문지완':2, '김민재':2, '김민지':2,
+        '김영진':2, '김선웅':2, '오하영':2, '김한별':2,
+        // 개별(일반) 9회
+        '문수아':1, '오하은':1, '김사랑':1, '김재현':1,
+        '박찬율':1, '김도윤':1, '이재민':1, '이지후':1, '황다은':1
+      }
+    },
+    // 2월 실적 (이미지 기반)
+    1: {
+      total: 27, reg: 18, gen: 9,
+      perChild: {
+        // 집중(정기) 9명 × 2회 = 18회
+        '김영진':2, '이로운':2, '김민지':2, '김민재':2, '김한별':2,
+        '김선웅':2, '오하영':2, '문지완':2, '유하린':2,
+        // 개별(일반) 9회
+        '김도윤':1, '오하은':1, '김재현':1, '이재민':1,
+        '박찬율':1, '이지후':1, '김사랑':1, '문수아':1, '황다은':1
+      }
+    }
+  }
+};
+
+function buildMarPerChild() {
+  // 3/18 기준 완료 집중 11회: 김영진2, 이로운2, 유하린1, 김한별1, 김선웅1, 김민지1, 문지완1, 김민재1, 오하영1
+  return {
+    '김영진':2, '이로운':2,
+    '유하린':1, '김한별':1, '김선웅':1, '김민지':1, '문지완':1, '김민재':1, '오하영':1,
+    '박찬율':1, '이재민':1, '문수아':1, '김재현':1,
+    '황다은':1, '김사랑':1, '김도윤':1, '오하은':1
+  };
+}
+
+// ── 3월 일정 직접 입력 (2026년 3월 실제 일정 기준) ────────────
+function loadMarchSchedule() {
+  Object.keys(schedule).forEach(k => { if(k.startsWith('2026-2-')) delete schedule[k]; });
+  const add = (date, time, child, type) => {
+    const d = new Date(2026, 2, date), k = `2026-2-${date}`;
+    if(!schedule[k]) schedule[k] = [];
+    schedule[k].push({date:d, wd:d.getDay()-1, time, child, type, conflict:false, cancelled:false});
+  };
+  // 3/3(화)
+  add(3,16,'김영진','정기'); add(3,18,'이로운','정기');
+  // 3/5(목)
+  add(5,18,'박찬율','일반'); add(5,19,'유하린','정기');
+  // 3/6(금)
+  add(6,18,'김한별','정기');
+  // 3/9(월)
+  add(9,18,'김도윤','일반'); add(9,19,'오하은','일반');
+  // 3/10(화)
+  add(10,18,'김선웅','정기'); add(10,19,'이재민','일반');
+  // 3/11(수)
+  add(11,18,'김민지','정기');
+  // 3/12(목)
+  add(12,18,'문지완','정기');
+  // 3/13(금)
+  add(13,16,'김민재','정기'); add(13,18,'오하영','정기');
+  // 3/16(월)
+  add(16,18,'황다은','일반'); add(16,19,'김사랑','일반');
+  // 3/17(화)
+  add(17,15,'문수아','일반'); add(17,16,'김영진','정기'); add(17,18,'이로운','정기');
+  // 3/18(수)
+  add(18,18,'김재현','일반');
+  // 3/19(목)
+  add(19,18,'유하린','정기'); add(19,19,'오하영','정기');
+  // 3/20(금)
+  add(20,18,'김한별','정기');
+  // 3/23(월)
+  add(23,16,'김민재','정기'); add(23,18,'이지후','일반');
+  // 3/25(수) — 김선웅 실제 16:20 (시스템상 16시 슬롯으로 처리)
+  add(25,16,'김선웅','정기'); add(25,18,'김민지','정기');
+  // 3/26(목)
+  add(26,16,'강예림','일반'); add(26,18,'문지완','정기'); add(26,19,'강석현','일반');
+  Object.keys(schedule).forEach(k => { if(k.startsWith('2026-2-')) schedule[k].sort((a,b)=>a.time-b.time); });
+}
+
+// ── 상태 판단 ─────────────────────────────────────────────────
+function isActiveAt(data,year,month){
+  const ym=year*100+month;
+  if(data.admit){const a=data.admit.replace(/-/g,'').slice(0,6);if(parseInt(a)>ym)return false;}
+  if(data.discharge){const d=data.discharge.replace(/-/g,'').slice(0,6);if(parseInt(d)<ym)return false;}
+  return true;
+}
+function isCurrentlyActive(data){
+  if(data.discharge&&new Date(data.discharge)<TODAY)return false;
+  return true;
+}
+function isPastDate(d) { return d < TODAY; }
+function isToday(d) { return d.toDateString() === TODAY.toDateString(); }
+
+// ── 탭 ────────────────────────────────────────────────────────
+function showTab(tab){
+  ['schedule','editor','stats','overall'].forEach((t,i)=>{
+    document.querySelectorAll('.tab')[i].classList.toggle('active',t===tab);
+    document.getElementById('page-'+t).classList.toggle('active',t===tab);
+  });
+  if(tab==='stats'){renderStats();renderMonthlyLogEditor();}
+  if(tab==='editor'){renderChildTabs();renderChildTable();}
+  if(tab==='overall')renderOverall();
+}
+
+// ── 헬퍼 ──────────────────────────────────────────────────────
+function getWorkdays(y,m){const ds=[],d=new Date(y,m,1);while(d.getMonth()===m){if(d.getDay()>=1&&d.getDay()<=5)ds.push(new Date(d));d.setDate(d.getDate()+1);}return ds;}
+function shuffle(arr){const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function canSchedule(child,wd,time){const s=AVAIL[child]?.slots[wd];return s?s.includes(time):false;}
+function fmtDate(str){return str?str.replaceAll('-','.'):'—'}
+
+// ── 격주 배정 ─────────────────────────────────────────────────
+// 주차 계산 (월요일 기준)
+function getWeekNum(date){
+  const d=new Date(date); d.setHours(0,0,0,0);
+  d.setDate(d.getDate()-(d.getDay()||7)+1); // 월요일로
+  return d.getTime();
+}
+
+function scheduleRegular(child, data, allSlots, usedIdx, isDayFree, markDay){
+  const prefWd=data.preferDay, prefTime=data.preferTime;
+
+  // 배정 가능한 슬롯 전체 (시간대 미사용 + 개인 가능 시간 + 연속 방지)
+  const avail = allSlots.map((s,i)=>({s,i})).filter(({s,i})=>{
+    if(usedIdx.has(i)) return false;
+    if(!isDayFree(i,child)) return false;
+    return canSchedule(child, s.wd, s.time);
+  });
+
+  // 같은 주에 이미 배정된 슬롯이 있는지 확인하는 헬퍼
+  const sameWeekAssigned = (i) => {
+    const wk = getWeekNum(allSlots[i].date);
+    return avail.some(({s,i:j})=> j!==i && allSlots[j].child===child && getWeekNum(allSlots[j].date)===wk)
+      || [...usedIdx].some(j=>{
+        if(allSlots[j].child!==child) return false;
+        return getWeekNum(allSlots[j].date)===wk;
+      });
+  };
+
+  // 쌍 찾기: 조건에 맞는 두 슬롯 선택
+  // 우선순위: ① 선호요일+14일이상 ② 아무요일+14일이상 ③ 선호요일+7일이상(다른주) ④ 아무요일+7일이상(다른주)
+  const findPair = (candidates) => {
+    const sorted = [...candidates].sort((a,b)=>a.s.date-b.s.date);
+    // 14일 이상 (1·3주 or 2·4주)
+    for(let a=0;a<sorted.length;a++){
+      for(let b=a+1;b<sorted.length;b++){
+        const gap = (sorted[b].s.date - sorted[a].s.date)/86400000;
+        const diffWeek = getWeekNum(sorted[b].s.date) !== getWeekNum(sorted[a].s.date);
+        if(gap>=14 && diffWeek) return [sorted[a],sorted[b]];
+      }
+    }
+    // 7일 이상 + 다른 주
+    for(let a=0;a<sorted.length;a++){
+      for(let b=a+1;b<sorted.length;b++){
+        const gap = (sorted[b].s.date - sorted[a].s.date)/86400000;
+        const diffWeek = getWeekNum(sorted[b].s.date) !== getWeekNum(sorted[a].s.date);
+        if(gap>=7 && diffWeek) return [sorted[a],sorted[b]];
+      }
+    }
+    return null;
+  };
+
+  // ① 선호 요일+시간으로 먼저 시도
+  if(prefWd!==null){
+    const prefCands = avail.filter(({s})=>s.wd===prefWd && (prefTime===null||s.time===prefTime));
+    const pair = findPair(prefCands);
+    if(pair){ pair.forEach(({i})=>{allSlots[i].child=child;allSlots[i].type='정기';markDay(i,child);}); return true; }
+  }
+
+  // ② 선호 요일이되 시간 무관
+  if(prefWd!==null){
+    const prefCands = avail.filter(({s})=>s.wd===prefWd);
+    const pair = findPair(prefCands);
+    if(pair){ pair.forEach(({i})=>{allSlots[i].child=child;allSlots[i].type='정기';markDay(i,child);}); return true; }
+  }
+
+  // ③ 아무 요일, 선호 시간
+  if(prefTime!==null){
+    const timeCands = avail.filter(({s})=>s.time===prefTime);
+    const pair = findPair(timeCands);
+    if(pair){ pair.forEach(({i})=>{allSlots[i].child=child;allSlots[i].type='정기';markDay(i,child);}); return true; }
+  }
+
+  // ④ 아무 요일, 아무 시간
+  const pair = findPair(avail);
+  if(pair){ pair.forEach(({i})=>{allSlots[i].child=child;allSlots[i].type='정기';markDay(i,child);}); return true; }
+
+  // 마지막 fallback: 조건 완화 (다른 주만 보장)
+  const sorted = [...avail].sort((a,b)=>a.s.date-b.s.date);
+  for(let a=0;a<sorted.length;a++){
+    for(let b=a+1;b<sorted.length;b++){
+      if(getWeekNum(sorted[b].s.date)!==getWeekNum(sorted[a].s.date)){
+        [sorted[a],sorted[b]].forEach(({i})=>{allSlots[i].child=child;allSlots[i].type='정기';allSlots[i].conflict=true;markDay(i,child);});
+        return false;
+      }
+    }
+  }
+  return false;
+}
+
+// ── 일정 생성 ─────────────────────────────────────────────────
+// 생성된 월 기록 (재방문 시 재배정 방지)
+const generatedMonths = new Set(['2026-2']); // 3월은 수동 세팅
+
+function changeMonth(d){
+  curMonth+=d;if(curMonth<0){curMonth=11;curYear--;}if(curMonth>11){curMonth=0;curYear++;}
+  const key=`${curYear}-${curMonth}`;
+  // 1월
+  if(curYear===2026&&curMonth===0){
+    const has=Object.keys(schedule).some(k=>k.startsWith('2026-0-'));
+    if(!has){ loadJanSchedule(); generatedMonths.add('2026-0'); autoSave(); }
+    render(); return;
+  }
+  // 2월
+  if(curYear===2026&&curMonth===1){
+    const has=Object.keys(schedule).some(k=>k.startsWith('2026-1-'));
+    if(!has){ loadFebSchedule(); generatedMonths.add('2026-1'); autoSave(); }
+    render(); return;
+  }
+  // 3월
+  if(curYear===2026&&curMonth===2){
+    const has=Object.keys(schedule).some(k=>k.startsWith('2026-2-'));
+    if(!has) loadMarchSchedule();
+    render(); return;
+  }
+  // 4월
+  if(curYear===2026&&curMonth===3){
+    const has=Object.keys(schedule).some(k=>k.startsWith('2026-3-'));
+    if(!has){ loadAprilSchedule(); generatedMonths.add(key); autoSave(); }
+    render(); return;
+  }
+  if(generatedMonths.has(key)){
+    render();
+  } else {
+    generate(); recordMonth();
+    generatedMonths.add(key);
+    autoSave();
+  }
+}
+
+let scheduleBackup = null; // 재배정 전 백업
+
+function confirmRegen(){
+  if(!confirm(`${curYear}년 ${MN[curMonth]} 일정을 다시 자동 배정할까요?\n\n현재 일정은 백업되어 바로 되돌릴 수 있어요.`)) return;
+  // 현재 일정 백업
+  scheduleBackup = {
+    schedule: JSON.parse(JSON.stringify(Object.fromEntries(
+      Object.entries(schedule).map(([k,v])=>[k,v.map(s=>({...s,date:s.date.toISOString()}))])
+    ))),
+    year: curYear, month: curMonth
+  };
+  document.getElementById('undo-btn').style.display = 'inline-flex';
+  generateAndRecord();
+}
+
+function undoRegen(){
+  if(!scheduleBackup || scheduleBackup.year!==curYear || scheduleBackup.month!==curMonth){
+    alert('되돌릴 수 있는 백업이 없습니다.');return;
+  }
+  if(!confirm('이전 일정으로 되돌릴까요?')) return;
+  schedule = {};
+  Object.entries(scheduleBackup.schedule).forEach(([k,arr])=>{
+    schedule[k] = arr.map(s=>({...s, date:new Date(s.date)}));
+  });
+  scheduleBackup = null;
+  document.getElementById('undo-btn').style.display = 'none';
+  render(); autoSave();
+}
+
+function generateAndRecord(){
+  const key=`${curYear}-${curMonth}`;
+  if(curYear===2026&&curMonth===2){ loadMarchSchedule(); render(); recordMonth(); autoSave(); return; }
+  if(curYear===2026&&curMonth===3){ loadAprilSchedule(); render(); recordMonth(); autoSave(); return; }
+  generate(); recordMonth();
+  generatedMonths.add(key);
+  autoSave();
+}
+
+// ★ 수정 포인트 4: 같은 날 상담 금지 아동 쌍
+const SEPARATE_PAIRS = [
+  ['김선웅', '문지완'],
+];
+// ★ 수정 포인트 5: 상담 불가 날짜 ('YYYY-M(0-based)-D' 형식)
+// 예: '2026-4-10' → 5월 10일 (월 인덱스는 0부터 시작)
+const BLOCKED_DATES = new Map([
+  ['2026-3-10', '연가'],
+  ['2026-3-28', '영유아부모 특화pg'],
+]);
+
+function isBlocked(date){
+  const k=`${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+  return BLOCKED_DATES.has(k);
+}
+function getBlockReason(date){
+  const k=`${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+  return BLOCKED_DATES.get(k)||'';
+}
+function toggleBlock(date){
+  const k=`${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+  if(BLOCKED_DATES.has(k)){
+    if(!confirm(`${date.getMonth()+1}/${date.getDate()} 상담 불가를 해제할까요?`)) return;
+    BLOCKED_DATES.delete(k);
+  } else {
+    const reason = prompt(`${date.getMonth()+1}/${date.getDate()} 상담 불가 사유를 입력해 주세요.\n(예: 출장, 휴가, 기관 행사 등)\n비워두면 사유 없이 등록됩니다.`);
+    if(reason === null) return;
+    BLOCKED_DATES.set(k, reason.trim());
+  }
+  render(); autoSave();
+}
+
+function generate(){
+  const days=getWorkdays(curYear,curMonth);
+  const allSlots=[];
+  // 차단 날짜 제외하고 슬롯 생성
+  days.filter(d=>!isBlocked(d)).forEach(d=>{const wd=d.getDay()-1;TIMES.forEach(t=>allSlots.push({date:new Date(d),wd,time:t,child:null,type:null,conflict:false}));});
+  const active=Object.entries(AVAIL).filter(([,v])=>isActiveAt(v,curYear,curMonth));
+  const usedIdx=new Set();
+
+  // 날짜+시간별 배정 추적 (같은 시간대 중복 방지)
+  const slotKey=(i)=>`${allSlots[i].date.toDateString()}-${allSlots[i].time}`;
+  const usedSlotKey=new Set();
+  const dayChild={};
+
+  const markDay=(i,child)=>{
+    usedIdx.add(i);
+    usedSlotKey.add(slotKey(i));
+    const dk=allSlots[i].date.toDateString();
+    if(!dayChild[dk])dayChild[dk]=new Set();
+    dayChild[dk].add(child);
+  };
+
+  const isDayFree=(i,child)=>{
+    // 같은 시간대 이미 다른 아동 배정 여부
+    if(usedSlotKey.has(slotKey(i)))return false;
+    const d=allSlots[i].date;
+    const wk=getWeekNum(d);
+    // 당일, 전날, 다음날 연속 방지
+    for(let diff=-1;diff<=1;diff++){
+      const nd=new Date(d);nd.setDate(nd.getDate()+diff);
+      const dk=nd.toDateString();
+      if(dayChild[dk]&&dayChild[dk].has(child))return false;
+    }
+    // 같은 주 2회 방지
+    if(dayChild){
+      for(const [dk,children] of Object.entries(dayChild)){
+        if(children.has(child)){
+          const existDate=new Date(dk);
+          if(getWeekNum(existDate)===wk)return false;
+        }
+      }
+    }
+    return true;
+  };
+
+  // 4월이 아닌 달만 자동 배정
+  const regKids=shuffle(active.filter(([,v])=>v.type==='정기').map(([k,v])=>({name:k,data:v})));
+  const genKids=shuffle(active.filter(([,v])=>v.type==='일반').map(([k])=>k));
+  regKids.forEach(({name,data})=>scheduleRegular(name,data,allSlots,usedIdx,isDayFree,markDay));
+  genKids.forEach(child=>{
+    const pref=allSlots.map((s,i)=>({s,i})).filter(({s,i})=>!usedIdx.has(i)&&canSchedule(child,s.wd,s.time)&&isDayFree(i,child));
+    if(pref.length){const p=pref[Math.floor(Math.random()*pref.length)];allSlots[p.i].child=child;allSlots[p.i].type='일반';markDay(p.i,child);}
+    else{const fb=allSlots.map((s,i)=>({s,i})).filter(({s,i})=>!usedIdx.has(i)&&!usedSlotKey.has(slotKey(i)));if(fb.length){const p=fb[Math.floor(Math.random()*fb.length)];allSlots[p.i].child=child;allSlots[p.i].type='일반';allSlots[p.i].conflict=true;markDay(p.i,child);}}
+  });
+  const monthPrefix=`${curYear}-${curMonth}-`;
+  Object.keys(schedule).forEach(k=>{if(k.startsWith(monthPrefix))delete schedule[k];});
+  allSlots.forEach(s=>{const k=`${s.date.getFullYear()}-${s.date.getMonth()}-${s.date.getDate()}`;if(!schedule[k])schedule[k]=[];schedule[k].push(s);});
+  render();
+}
+
+// ── 4월 일정 직접 입력 (이미지 기반 재조정) ─────────────────────────
+function loadAprilSchedule() {
+  Object.keys(schedule).forEach(k => { if(k.startsWith('2026-3-')) delete schedule[k]; });
+  const add = (date, time, child, type) => {
+    const d = new Date(2026, 3, date), k = `2026-3-${date}`;
+    if(!schedule[k]) schedule[k] = [];
+    schedule[k].push({date:d, wd:d.getDay()-1, time, child, type, conflict:false, cancelled:false});
+  };
+
+  // ── 1주차 ──
+  // 4/1(수)
+  add(1,18,'김민지','정기');
+  // 4/2(목) — 김사랑 16시(태권도 전), 김한별 18시
+  add(2,16,'김사랑','일반'); add(2,18,'김한별','정기');
+  // 4/3(금)
+  add(3,16,'김민재','정기'); add(3,18,'유하린','정기');
+
+  // ── 2주차 ──
+  // 4/6(월)
+  add(6,18,'이로운','정기');
+  // 4/7(화)
+  add(7,16,'김영진','정기'); add(7,18,'김선웅','정기');
+  // 4/8(수) — 강예림 수 방과후 후 16:10 가능 → 16시 슬롯
+  add(8,16,'강예림','일반');
+  // 4/9(목)
+  add(9,18,'문지완','정기');
+  // 4/10(금) 연가 - 상담없음
+
+  // ── 3주차 ──
+  // 4/13(월)
+  add(13,18,'강석현','일반');
+  // 4/14(화)
+  add(14,18,'문수아','일반');
+  // 4/15(수)
+  add(15,18,'김민지','정기');
+  // 4/16(목) — 이재민 16:40 합주 불가 → 이지후 대체, 김한별 18시
+  add(16,16,'이지후','일반'); add(16,18,'김한별','정기');
+  // 4/17(금)
+  add(17,16,'김민재','정기'); add(17,18,'오하영','정기');
+
+  // ── 4주차 ──
+  // 4/20(월) — 황다은 월 미술학원(5:10귀가) 불가 → 제거, 이로운만
+  add(20,18,'이로운','정기');
+  // 4/21(화)
+  add(21,16,'김영진','정기'); add(21,18,'김선웅','정기');
+  // 4/22(수)
+  add(22,18,'유하린','정기');
+  // 4/23(목) — 김도윤 목 15:30~16:30 가능 → 16시, 문지완 18시
+  add(23,16,'김도윤','일반'); add(23,18,'문지완','정기');
+  // 4/24(목) — 황다은 목 저녁 가능 → 18시 / 박찬율 16시, 오하영 18시
+  add(24,16,'박찬율','일반'); add(24,18,'오하영','정기');
+  // 4/25(금) — 이재민 금 16시 이후 가능
+  add(25,16,'이재민','일반');
+
+  // ── 5주차 ──
+  // 4/27(월) — 김재현 월 16:30귀가+19시 1:1학습 → 18시로 변경
+  add(27,18,'김재현','일반');
+  // 4/28(화) 영유아부모 특화pg - 상담없음
+  // 4/29(수) — 강예림 수 가능, 김사랑 18시
+  add(29,16,'강예림','일반'); // 김사랑은 4/2로 확정, 4/29 제거
+  // 4/30(목) — 오하은 16시, 황다은 18시
+  add(30,16,'오하은','일반'); add(30,18,'황다은','일반');
+
+  Object.keys(schedule).forEach(k => { if(k.startsWith('2026-3-')) schedule[k].sort((a,b) => a.time - b.time); });
+}
+
+// 완료 여부 판단: 날짜 지남(자동) 또는 수동 완료, 취소 제외
+function isCompleted(slot, date){
+  if(!slot.child || slot.cancelled) return false;
+  return slot.done || (isPastDate(date) && !isToday(date));
+}
+
+// schedule 전체에서 완료된 세션을 연/월별로 집계
+function calcCompletedLog(){
+  const log = {};
+  Object.entries(schedule).forEach(([k, slots])=>{
+    const parts = k.split('-');
+    const y = parseInt(parts[0]), m = parseInt(parts[1]), day = parseInt(parts[2]);
+    const date = new Date(y, m, day);
+    slots.forEach(s=>{
+      if(!isCompleted(s, date)) return;
+      if(!log[y]) log[y]={};
+      if(!log[y][m]) log[y][m]={total:0,reg:0,gen:0,perChild:{}};
+      log[y][m].total++;
+      if(s.type==='정기') log[y][m].reg++; else log[y][m].gen++;
+      log[y][m].perChild[s.child]=(log[y][m].perChild[s.child]||0)+1;
+    });
+  });
+  // monthlyLog 수동 데이터 병합 (schedule에 없는 달만)
+  Object.entries(monthlyLog).forEach(([y, months])=>{
+    const year = parseInt(y);
+    Object.entries(months).forEach(([m, data])=>{
+      const mi = parseInt(m);
+      const hasInSchedule = Object.keys(schedule).some(k=>k.startsWith(`${year}-${mi}-`));
+      if(!hasInSchedule){
+        if(!log[year]) log[year]={};
+        log[year][mi] = data;
+      }
+    });
+  });
+  return log;
+}
+
+function recordMonth(){
+  // 실시간 집계로 대체되어 별도 기록 불필요 (3월 이후)
+  // 하위 호환을 위해 유지
+}
+
+// 특정 날짜까지(포함) 해당 아동의 연간 누적 회차 계산 (완료 여부 무관, 취소만 제외)
+function calcSessionNum(child, upToDate){
+  let count = 0;
+  const year = upToDate.getFullYear();
+  const upToM = year*100 + upToDate.getMonth();
+  const upTo = upToDate.getTime();
+
+  // monthlyLog에서 schedule에 없는 이전 달 합산
+  if(monthlyLog[year]){
+    Object.entries(monthlyLog[year]).forEach(([m, data])=>{
+      const ym = year*100 + parseInt(m);
+      // schedule에 해당 달 데이터가 있으면 아래에서 계산하므로 skip
+      const hasInSchedule = Object.keys(schedule).some(k=>k.startsWith(`${year}-${m}-`));
+      if(hasInSchedule) return;
+      count += (data.perChild||{})[child] || 0;
+    });
+  }
+
+  // schedule에서 해당 날짜까지 모든 배정 슬롯 계산 (취소만 제외)
+  Object.entries(schedule).forEach(([k, slots])=>{
+    const parts = k.split('-');
+    const d = new Date(parseInt(parts[0]), parseInt(parts[1]), parseInt(parts[2]));
+    if(d.getFullYear() !== year) return;
+    if(d.getTime() > upTo) return;
+    slots.forEach(s=>{
+      if(s.child===child && !s.cancelled) count++;
+    });
+  });
+
+  return count;
+}
+
+// ── 월 실적 — 모든 달 실시간 자동집계 (수동 입력 없음) ──────────
+function renderMonthlyLogEditor(){
+  const tbody = document.getElementById('monthly-log-tbody');
+  if(!tbody) return;
+  tbody.innerHTML = '';
+  const year = statsYear;
+  const compLog = calcCompletedLog();
+  const curM = (year === TODAY.getFullYear()) ? TODAY.getMonth() : 11;
+  let yearReg = 0, yearGen = 0;
+
+  for(let m=0; m<=curM; m++){
+    const comp = compLog[year]?.[m] || {reg:0, gen:0};
+    const reg = comp.reg||0;
+    const gen = comp.gen||0;
+    const total = reg + gen;
+    yearReg += reg; yearGen += gen;
+
+    const isCurrentMonth = (year === TODAY.getFullYear() && m === TODAY.getMonth());
+    const badge = isCurrentMonth
+      ? '<span style="font-size:10px;background:#fef3c7;color:#92400e;padding:2px 7px;border-radius:4px;font-weight:500">진행중</span>'
+      : '<span style="font-size:10px;background:#d1fae5;color:#065f46;padding:2px 7px;border-radius:4px;font-weight:500">자동집계</span>';
+
+    const tr = document.createElement('tr');
+    tr.style.background = isCurrentMonth ? '#fffbeb' : '';
+    tr.innerHTML =
+      '<td style="padding:8px;border:1px solid #e0dfd8;text-align:center;font-weight:600">' + (m+1) + '월</td>' +
+      '<td style="padding:8px;border:1px solid #e0dfd8;text-align:center;font-size:20px;font-weight:700;color:#3a5bd9">' + reg + '</td>' +
+      '<td style="padding:8px;border:1px solid #e0dfd8;text-align:center;font-size:20px;font-weight:700;color:#10b981">' + gen + '</td>' +
+      '<td style="padding:8px;border:1px solid #e0dfd8;text-align:center;font-size:20px;font-weight:700;color:#333">' + total + '</td>' +
+      '<td style="padding:8px;border:1px solid #e0dfd8;text-align:center">' + badge + '</td>';
+    tbody.appendChild(tr);
+  }
+
+  // 연간 합계 행
+  const tfootTr = document.getElementById('monthly-log-tfoot');
+  if(tfootTr){
+    const yearTotal = yearReg + yearGen;
+    tfootTr.innerHTML =
+      '<td style="padding:8px;border:1px solid #e0dfd8;text-align:center;font-weight:700;background:#f5f4f0">합계</td>' +
+      '<td style="padding:8px;border:1px solid #e0dfd8;text-align:center;font-size:18px;font-weight:700;color:#3a5bd9;background:#f5f4f0">' + yearReg + '</td>' +
+      '<td style="padding:8px;border:1px solid #e0dfd8;text-align:center;font-size:18px;font-weight:700;color:#10b981;background:#f5f4f0">' + yearGen + '</td>' +
+      '<td style="padding:8px;border:1px solid #e0dfd8;text-align:center;font-size:18px;font-weight:700;background:#f5f4f0">' + yearTotal + '</td>' +
+      '<td style="border:1px solid #e0dfd8;background:#f5f4f0"></td>';
+  }
+}
+
+// ── 달력 렌더 ─────────────────────────────────────────────────
+function render(){
+  document.getElementById('month-label').textContent=`${curYear}년 ${MN[curMonth]}`;
+  const days=getWorkdays(curYear,curMonth);
+  // 이번 달 배정 수 (전체)
+  let total=0,reg=0,gen=0,warn=0;
+  days.forEach(d=>{const k=`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    (schedule[k]||[]).forEach(s=>{if(s.child&&!s.cancelled){total++;if(s.type==='정기')reg++;else gen++;if(s.conflict)warn++;}});});
+
+  // 이번 달 완료 수 (실시간)
+  const compLog = calcCompletedLog();
+  const mComp = compLog[curYear]?.[curMonth]||{reg:0,gen:0};
+  document.getElementById('s-warn').textContent=warn;
+
+  // 누계 (실시간 완료 기준)
+  let cumReg=0, cumGen=0;
+  if(compLog[curYear]){Object.values(compLog[curYear]).forEach(v=>{cumReg+=v.reg||0;cumGen+=v.gen||0;});}
+  document.getElementById('s-reg-cum').textContent=cumReg;
+  document.getElementById('s-gen-cum').textContent=cumGen;
+  document.getElementById('s-active').textContent=Object.values(AVAIL).filter(v=>isCurrentlyActive(v)).length+'명';
+
+  // 진행 배너 — 모든 달 실시간 완료 현황
+  const banner=document.getElementById('progress-banner');
+  const doneReg=mComp.reg||0, doneGen=mComp.gen||0;
+  const rRate=reg>0?Math.round(doneReg/reg*100):0;
+  const gRate=gen>0?Math.round(doneGen/gen*100):0;
+  banner.innerHTML=`
+    <div class="pb-item"><div class="pb-label">${curYear}년 ${MN[curMonth]} 현황</div><div class="pb-val" style="color:#059669">완료 ${doneReg+doneGen}회</div></div>
+    <div class="pb-prog">
+      <div style="font-size:11px;color:#555;margin-bottom:3px">집중상담 ${doneReg}회 완료 / 계획 ${reg}회</div>
+      <div class="pb-bar-wrap"><div class="pb-bar" style="width:${rRate}%;background:#3a5bd9"></div></div>
+    </div>
+    <div class="pb-prog">
+      <div style="font-size:11px;color:#555;margin-bottom:3px">개별상담 ${doneGen}회 완료 / 계획 ${gen}회</div>
+      <div class="pb-bar-wrap"><div class="pb-bar" style="width:${gRate}%;background:#10b981"></div></div>
+    </div>`;
+  banner.style.display='flex';
+
+  const body=document.getElementById('cal-body');body.innerHTML='';
+  const firstWd=days[0].getDay();const sp=firstWd===1?0:(firstWd===0?4:firstWd-1);
+  let wds=[];for(let i=0;i<sp;i++)wds.push(null);days.forEach(d=>wds.push(d));while(wds.length%5!==0)wds.push(null);
+
+  wds.forEach(d=>{
+    const cell=document.createElement('div');
+    let cls='day-cell';
+    if(!d){cls+=' empty';cell.className=cls;body.appendChild(cell);return;}
+    const blocked=isBlocked(d);
+    if(blocked) cls+=' blocked';
+    else if(isToday(d)) cls+=' today';
+    else if(isPastDate(d)) cls+=' past';
+    cell.className=cls;
+
+    const k=`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    const ds=schedule[k]||[];
+    const todayMark=isToday(d)?`<span class="today-dot"></span>`:'';
+    const blockReason=getBlockReason(d);
+    cell.innerHTML=`<div class="day-num ${isToday(d)?'today-num':''}">${d.getMonth()+1}/${d.getDate()}${todayMark}</div>${blocked?`<div class="blocked-label">🚫 ${blockReason||'상담 불가'}</div>`:''}`;
+    if(blocked){ cell.onclick=()=>showBlockedModal(d); }
+    else {
+      // 배정된 아동이 있는 슬롯만 표시 (빈 시간대 숨김)
+      ds.filter(s=>s.child).forEach(s=>{
+        const el=document.createElement('div');
+        const past=isPastDate(d)&&!isToday(d);
+        el.className=`slot ${s.cancelled?'slot-cancelled':s.done?'slot-manually-done':past?'slot-done':s.conflict?'slot-warn':`slot-${s.type}`}`;
+        // 이 날짜까지의 해당 아동 누적 회차 계산
+        const sessionNum = calcSessionNum(s.child, d);
+        const sessionTag = sessionNum>0?` (${sessionNum}회)`:'';
+        el.textContent=`${fmtTime(s.time)} ${s.child}${sessionTag}${s.cancelled?` (${s.cancelReason||'취소'})`:s.done?' ✓':''}`;
+        cell.appendChild(el);
+      });
+      cell.onclick=()=>showModal(d,ds);
+    }
+    body.appendChild(cell);
+  });
+}
+
+// ── 모달 ──────────────────────────────────────────────────────
+function showBlockedModal(d){
+  const year=d.getFullYear(), month=d.getMonth(), date=d.getDate();
+  const reason=getBlockReason(d);
+  document.getElementById('modal-title').textContent=`${year}년 ${month+1}/${date}(${WDS[d.getDay()]}) 상담 불가`;
+  const list=document.getElementById('modal-list');
+  list.innerHTML=`
+    <div class="modal-item" style="flex-direction:column;align-items:flex-start;gap:6px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="badge badge-warn">🚫 상담 불가</span>
+        ${reason?`<span style="font-size:12px;color:#555">${reason}</span>`:'<span style="font-size:12px;color:#aaa">사유 없음</span>'}
+      </div>
+      <button onclick="toggleBlock(new Date(${year},${month},${date}));closeModal();" style="font-size:12px;padding:6px 14px;border-radius:6px;border:1px solid #bbf7d0;background:#f0fdf4;color:#15803d;cursor:pointer;font-family:inherit;margin-top:4px">✓ 상담 불가 해제</button>
+    </div>`;
+  document.getElementById('modal').classList.add('active');
+}
+
+function showModal(d, slots){
+  const past = isPastDate(d) && !isToday(d);
+  const year = d.getFullYear(), month = d.getMonth(), date = d.getDate();
+  const k = `${year}-${month}-${date}`;
+  document.getElementById('modal-title').textContent =
+    `${year}년 ${month+1}/${date}(${WDS[d.getDay()]}) ${past?'(완료)':'상담'}`;
+
+  const list = document.getElementById('modal-list');
+  list.innerHTML = '';
+
+  // 배정된 슬롯 목록
+  slots.forEach(s => {
+    if(!s.child) return;
+    const el = document.createElement('div');
+    el.className = 'modal-item';
+    const isCancelled = !!s.cancelled;
+    const isDone = !!s.done;
+    el.innerHTML = `
+      <span class="badge badge-${isCancelled?'warn':isDone?'일반':s.conflict?'warn':s.type}">${isCancelled?'취소':isDone?'완료':s.type+'상담'}</span>
+      <span style="${isCancelled||isDone?'text-decoration:line-through;color:#aaa':''}"><strong>${fmtTime(s.time)}</strong> ${s.child}${s.conflict&&!isCancelled&&!isDone?' <span class="badge badge-warn">⚠</span>':''}${past?' <span style="font-size:10px;color:#aaa">완료</span>':''}</span>
+      ${isCancelled&&s.cancelReason?`<span style="font-size:10px;color:#dc2626;background:#fff0f0;padding:1px 6px;border-radius:4px;border:1px solid #fca5a5">${s.cancelReason}</span>`:''}
+      ${!past?`<div class="slot-actions">
+        ${!isCancelled?`<button class="btn-${isDone?'undone':'done'}-slot" onclick="toggleDone(event,'${s.child}',${s.time},${year},${month},${date})">${isDone?'↩ 완료취소':'✓ 완료'}</button>`:''}
+        <button class="btn-${isCancelled?'restore':'cancel'}-slot" onclick="toggleCancel(event,'${s.child}',${s.time},${year},${month},${date})">${isCancelled?'↩ 복원':'✕ 취소'}</button>
+        <button class="btn-delete-slot" onclick="editSlot(event,'${s.child}',${s.time},${year},${month},${date})" style="border-color:#93c5fd;color:#1e40af;background:#eff6ff">✏️ 수정</button>
+        <button class="btn-delete-slot" onclick="deleteSlot(event,'${s.child}',${s.time},${year},${month},${date})">🗑 삭제</button>
+      </div>`:''}`;
+    if(s.conflict && !isCancelled && !isDone){
+      const n = document.createElement('div');
+      n.className = 'conflict-note';
+      n.textContent = '외부일정과 겹칠 수 있습니다.';
+      el.appendChild(n);
+    }
+    list.appendChild(el);
+  });
+
+  // 빈 슬롯 표시
+  const assignedTimes = slots.filter(s=>s.child).map(s=>s.time);
+  TIMES.forEach(t => {
+    if(!assignedTimes.includes(t)){
+      const el = document.createElement('div');
+      el.className = 'modal-item';
+      el.innerHTML = `<span style="color:#aaa">${t}:00 — 미배정</span>`;
+      list.appendChild(el);
+    }
+  });
+
+  // 추가 폼 (과거 날짜 제외)
+  if(!past){
+    const form = document.createElement('div');
+    form.className = 'modal-add-form';
+    const childOptions = Object.keys(AVAIL).map(n=>`<option value="${n}">${n}</option>`).join('');
+    form.innerHTML = `
+      <div class="modal-add-title">➕ 상담 추가</div>
+      <div class="modal-add-row">
+        <select class="modal-select" id="add-child">${childOptions}</select>
+        <input class="modal-select" id="add-time" type="text" placeholder="16:00" maxlength="5"
+          style="width:70px;text-align:center" oninput="this.value=this.value.replace(/[^0-9:]/g,'')"/>
+        <span style="font-size:10px;color:#aaa">예: 16:00, 14:10</span>
+        <select class="modal-select" id="add-type">
+          <option value="정기">집중</option>
+          <option value="일반">개별</option>
+        </select>
+        <button class="btn btn-primary btn-sm" onclick="addSlotModal(${year},${month},${date})">추가</button>
+      </div>
+      <div style="margin-top:10px;padding-top:10px;border-top:1px solid #e0dfd8">
+        <button onclick="toggleBlock(new Date(${year},${month},${date}));closeModal();" style="font-size:11px;padding:5px 12px;border-radius:6px;border:1px solid #fca5a5;background:#fff0f0;color:#dc2626;cursor:pointer;font-family:inherit;width:100%">🚫 이 날 상담 불가로 지정</button>
+      </div>`;
+    list.appendChild(form);
+  }
+
+  document.getElementById('modal').classList.add('active');
+}
+
+function toggleDone(e, child, time, year, month, date){
+  e.stopPropagation();
+  const k=`${year}-${month}-${date}`;
+  const slot=(schedule[k]||[]).find(s=>s.child===child && Math.abs(s.time-time)<0.01);
+  if(slot){ slot.done=!slot.done; render(); autoSave(); }
+  showModal(new Date(year, month, date), schedule[k]||[]);
+}
+
+function toggleCancel(e, child, time, year, month, date){
+  e.stopPropagation();
+  const k = `${year}-${month}-${date}`;
+  const slot = (schedule[k]||[]).find(s=>s.child===child && Math.abs(s.time-time)<0.01);
+  if(!slot) return;
+  if(slot.cancelled){
+    // 복원
+    slot.cancelled = false;
+    slot.cancelReason = '';
+  } else {
+    // 취소 사유 입력
+    const reason = prompt(`취소 사유를 입력해 주세요.\n(예: 출장, 병가, 아동 결석 등)\n비워두면 사유 없이 취소됩니다.`);
+    if(reason === null) return; // 창 닫으면 취소 안 함
+    slot.cancelled = true;
+    slot.cancelReason = reason.trim();
+  }
+  render(); autoSave();
+  showModal(new Date(year, month, date), schedule[k]||[]);
+}
+
+function deleteSlot(e, child, time, year, month, date){
+  e.stopPropagation();
+  if(!confirm(`${child} ${fmtTime(time)} 상담을 일정에서 삭제할까요?`)) return;
+  const k = `${year}-${month}-${date}`;
+  if(schedule[k]){
+    schedule[k] = schedule[k].filter(s => !(s.child===child && Math.abs(s.time-time)<0.01));
+  }
+  render(); autoSave();
+  showModal(new Date(year, month, date), schedule[k]||[]);
+}
+
+
+function fmtTime(t){
+  // '18:00' 형태 문자열이면 그대로 반환
+  if(typeof t === 'string' && t.includes(':')) return t;
+  const n = parseFloat(t);
+  if(isNaN(n)) return String(t);
+  // 100 이상이면 HHMM 형태로 간주 (예: 1800 → 18:00, 1610 → 16:10)
+  if(n >= 100){
+    const h = Math.floor(n / 100);
+    const m = Math.round(n % 100);
+    return h + ':' + String(m).padStart(2,'0');
+  }
+  // 일반 소수 시간 (16.333 → 16:20)
+  const h = Math.floor(n);
+  const m = Math.round((n - h) * 60);
+  return h + ':' + String(m).padStart(2,'0');
+}
+function parseTime(str){
+  if(typeof str === 'number') return str;
+  str = String(str).trim();
+  if(str.includes(':')){
+    const [h,m] = str.split(':').map(Number);
+    return h + (m||0)/60;
+  }
+  const n = parseFloat(str)||16;
+  // HHMM 형태 방지: 1800 입력 시 → 18로 변환
+  if(n >= 100) return Math.floor(n/100) + (n%100)/60;
+  return n;
+}
+function editSlot(e, child, time, year, month, date){
+  e.stopPropagation();
+  const k = `${year}-${month}-${date}`;
+  const slot = (schedule[k]||[]).find(s=>s.child===child && Math.abs(s.time-time)<0.01);
+  if(!slot) return;
+
+  // 수정 모달 인라인 표시
+  const list = document.getElementById('modal-list');
+  // 기존 수정폼 있으면 제거
+  const existing = document.getElementById('edit-form-inline');
+  if(existing) existing.remove();
+
+  const childOptions = Object.keys(AVAIL).map(n=>`<option value="${n}"${n===child?' selected':''}>${n}</option>`).join('');
+  const form = document.createElement('div');
+  form.id = 'edit-form-inline';
+  form.style.cssText = 'margin-top:10px;padding:12px;background:#eff6ff;border-radius:10px;border:1px solid #93c5fd';
+  form.innerHTML = `
+    <div style="font-size:12px;font-weight:600;color:#1e40af;margin-bottom:8px">✏️ 수정: ${child} ${fmtTime(time)}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+      <select class="modal-select" id="edit-child">${childOptions}</select>
+      <input class="modal-select" id="edit-time" type="text" value="${fmtTime(time)}" maxlength="5"
+        style="width:70px;text-align:center" oninput="this.value=this.value.replace(/[^0-9:]/g,'')"/>
+      <select class="modal-select" id="edit-type">
+        <option value="정기"${slot.type==='정기'?' selected':''}>집중</option>
+        <option value="일반"${slot.type==='일반'?' selected':''}>개별</option>
+      </select>
+      <button class="btn btn-primary btn-sm" onclick="saveEditSlot('${child}',${time},${year},${month},${date})">저장</button>
+      <button class="btn btn-sm" onclick="document.getElementById('edit-form-inline').remove()">취소</button>
+    </div>`;
+  list.appendChild(form);
+}
+
+function saveEditSlot(oldChild, oldTime, year, month, date){
+  const k = `${year}-${month}-${date}`;
+  const slot = (schedule[k]||[]).find(s=>s.child===oldChild && Math.abs(s.time-oldTime)<0.01);
+  if(!slot) return;
+  const newChild = document.getElementById('edit-child').value;
+  const newTimeStr = document.getElementById('edit-time').value||fmtTime(oldTime);
+  const newTime = parseTime(newTimeStr);
+  const newType = document.getElementById('edit-type').value;
+  slot.child = newChild;
+  slot.time = newTime;
+  slot.type = newType;
+  schedule[k].sort((a,b)=>a.time-b.time);
+  render(); autoSave();
+  showModal(new Date(year, month, date), schedule[k]||[]);
+}
+
+function addSlotModal(year, month, date){
+  const child = document.getElementById('add-child').value;
+  const timeStr = document.getElementById('add-time').value||'16:00';
+  const time = parseTime(timeStr);
+  const type = document.getElementById('add-type').value;
+  const k = `${year}-${month}-${date}`;
+  if(!schedule[k]) schedule[k] = [];
+  const conflict = schedule[k].some(s => Math.abs(s.time - time) < 0.01 && s.child);
+  if(conflict && !confirm(`${fmtTime(time)}에 이미 다른 상담이 있습니다. 그래도 추가할까요?`)) return;
+  const d = new Date(year, month, date);
+  schedule[k].push({date:d, wd:d.getDay()-1, time, child, type, conflict:false, cancelled:false});
+  schedule[k].sort((a,b)=>a.time-b.time);
+  render(); autoSave();
+  showModal(d, schedule[k]);
+}
+function handleOverlayClick(e){if(e.target===document.getElementById('modal'))closeModal();}
+function closeModal(){document.getElementById('modal').classList.remove('active');}
+function changeStatsYear(d){statsYear+=d;renderStats();}
+function renderStats(){
+  document.getElementById('stats-year-label').textContent=`${statsYear}년`;
+  document.getElementById('an-year').textContent=statsYear;
+  const log = calcCompletedLog();
+  const yLog = log[statsYear]||{};
+  let total=0,reg=0,gen=0,mwd=0,tgt=0;
+  const perChild={};
+  for(let m=0;m<12;m++){
+    if(yLog[m]){
+      total+=yLog[m].total||0; reg+=yLog[m].reg||0; gen+=yLog[m].gen||0; mwd++;
+      Object.entries(yLog[m].perChild||{}).forEach(([c,n])=>{perChild[c]=(perChild[c]||0)+n;});
+      Object.values(AVAIL).forEach(v=>{if(isActiveAt(v,statsYear,m))tgt+=(v.type==='정기'?2:1);});
+    }
+  }
+
+  // 연간 진행률 카드
+  let annualPlan = 0;
+  Object.values(AVAIL).forEach(v=>{
+    for(let m=0;m<12;m++){
+      if(isActiveAt(v,statsYear,m)) annualPlan += v.type==='정기'?2:1;
+    }
+  });
+  const remain = Math.max(annualPlan - total, 0);
+  const pct = annualPlan>0 ? Math.round(total/annualPlan*100) : 0;
+  document.getElementById('ap-done').textContent = total;
+  document.getElementById('ap-plan').textContent = annualPlan;
+  document.getElementById('ap-pct').textContent = pct+'%';
+  document.getElementById('ap-remain').textContent = remain;
+  document.getElementById('ap-bar').style.width = Math.min(pct,100)+'%';
+  document.getElementById('ap-bar').style.background = pct>=90?'#10b981':pct>=60?'#3a5bd9':'#f59e0b';
+  document.getElementById('ap-sub').textContent = `집중 ${reg}회 + 개별 ${gen}회 완료 · 남은 목표 ${remain}회`;
+
+  // 집중/개별 비율
+  const regPct = total>0?Math.round(reg/total*100):50;
+  const genPct = total>0?100-regPct:50;
+  document.getElementById('ratio-reg-bar').style.width=regPct+'%';
+  document.getElementById('ratio-gen-bar').style.width=genPct+'%';
+  document.getElementById('ratio-reg-pct').textContent=regPct+'%';
+  document.getElementById('ratio-gen-pct').textContent=genPct+'%';
+
+  // 연도별 비교
+  const allLog = calcCompletedLog();
+  const years = [...new Set([...Object.keys(allLog).map(Number), statsYear])].sort();
+  const yearTotals = years.map(y=>({y, total:Object.values(allLog[y]||{}).reduce((s,m)=>s+(m.total||0),0)}));
+  const maxYTotal = Math.max(...yearTotals.map(d=>d.total), 1);
+  const ycWrap = document.getElementById('year-compare-bars');
+  ycWrap.innerHTML='';
+  yearTotals.forEach(({y,total:t})=>{
+    const pct=Math.max(t/maxYTotal*100, t>0?8:0);
+    const isCur=y===statsYear;
+    const col=document.createElement('div');
+    col.style.cssText='display:flex;flex-direction:column;align-items:center;gap:3px;flex:1';
+    col.innerHTML=`
+      <div style="font-size:10px;color:#555;font-weight:500">${t||''}</div>
+      <div style="width:100%;border-radius:4px 4px 0 0;background:${isCur?'#3a5bd9':'#dbeafe'};height:${pct}%;min-height:${t>0?4:0}px;transition:height .4s"></div>
+      <div style="font-size:10px;color:${isCur?'#3a5bd9':'#aaa'};font-weight:${isCur?'600':'400'}">${y}년</div>`;
+    ycWrap.appendChild(col);
+  });
+
+  renderChildStats(yLog, perChild);
+}
+function renderChildStats(log, perChild){
+  const tbody=document.getElementById('child-stats-tbody');tbody.innerHTML='';
+  Object.entries(AVAIL).forEach(([name,data])=>{
+    const mg=data.type==='정기'?2:1;
+    let tgt=0, ach=0;
+    for(let m=0;m<12;m++){
+      if(isActiveAt(data,statsYear,m)) tgt+=mg;
+    }
+    // schedule에서 직접 집계 (getClinicCount와 동일 기준)
+    Object.entries(schedule).forEach(([k,slots])=>{
+      const parts=k.split('-');
+      const y=parseInt(parts[0]),m=parseInt(parts[1]),day=parseInt(parts[2]);
+      if(y!==statsYear) return;
+      const date=new Date(y,m,day);
+      slots.forEach(s=>{
+        if(s.child===name && isCompleted(s,date)) ach++;
+      });
+    });
+    const rate=tgt>0?Math.round(ach/tgt*100):0;
+    const active=isCurrentlyActive(data);
+    const admitY=data.admit?data.admit.slice(0,7):'—';
+    const disY=data.discharge?data.discharge.slice(0,7):'재원 중';
+    const tr=document.createElement('tr');
+    if(!active)tr.className='row-inactive';
+    tr.innerHTML=`<td style="font-weight:600;text-align:center">${name}</td>
+      <td class="center"><span class="badge badge-${data.type}">${data.type}</span></td>
+      <td class="center"><span style="display:inline-flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:${active?'#10b981':'#d1d5db'};display:inline-block"></span>${active?'재원':'퇴소'}</span></td>
+      <td class="center" style="font-size:11px;color:#888">${admitY} ~ ${disY}</td>
+      <td class="center">${mg}회</td><td class="center">${tgt}회</td><td class="center">${ach}회</td>
+      <td style="padding:8px 12px"><div style="display:flex;align-items:center;gap:6px">
+        <div class="prog-wrap" style="flex:1"><div class="prog-bar${rate>=90?' done':rate<60?' low':''}" style="width:${Math.min(rate,100)}%"></div></div>
+        <span style="font-size:11px;color:#555;min-width:34px">${tgt>0?rate+'%':'—'}</span>
+      </div></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+// ── 에디터 ────────────────────────────────────────────────────
+function renderChildTabs(){
+  const active=document.getElementById('child-tabs-active');
+  const inactive=document.getElementById('child-tabs-inactive');
+  active.innerHTML='';inactive.innerHTML='';
+  Object.entries(AVAIL).forEach(([name,data])=>{
+    const btn=document.createElement('button');
+    const isA=isCurrentlyActive(data);
+    btn.className=`child-tab type-${data.type}${!isA?' inactive':''}${selectedChild===name?' active':''}`;
+    btn.textContent=name;
+    btn.onclick=()=>{selectedChild=name;renderChildTabs();renderEditorCard();};
+    (isA?active:inactive).appendChild(btn);
+  });
+}
+function renderEditorCard(){
+  const card=document.getElementById('editor-card');
+  if(!selectedChild||!AVAIL[selectedChild]){card.innerHTML='<div style="color:#aaa;font-size:13px">위에서 아동 이름을 선택하세요.</div>';return;}
+  const data=AVAIL[selectedChild];
+  const isA=isCurrentlyActive(data);
+  let preferHTML='';
+  if(data.type==='정기'){
+    let gc='';
+    for(let w=0;w<5;w++){
+      const canArr=data.slots[w]||[];
+      gc+=`<div class="preferred-day"><div class="preferred-day-label">${WD_NAMES[w]}</div><div style="display:flex;flex-direction:column;gap:4px">
+        ${canArr.includes(16)?`<button class="time-btn ${data.preferDay===w&&data.preferTime===16?'selected':''}" onclick="setPrefer(${w},16)">16:00</button>`:`<button class="time-btn" style="opacity:.3;cursor:not-allowed" disabled>16:00</button>`}
+        ${canArr.includes(18)?`<button class="time-btn ${data.preferDay===w&&data.preferTime===18?'selected':''}" onclick="setPrefer(${w},18)">18:00</button>`:`<button class="time-btn" style="opacity:.3;cursor:not-allowed" disabled>18:00</button>`}
+      </div></div>`;
+    }
+    const pl=data.preferDay!==null?`${WD_NAMES[data.preferDay]}요일 ${data.preferTime?data.preferTime+':00':'(시간자동)'} 격주`:'자동 배정';
+    preferHTML=`<div class="preferred-section"><div class="preferred-title">격주 상담 요일 선택 <span class="auto-badge">${pl}</span></div>
+      <div class="preferred-desc">원하는 요일·시간 클릭 → 격주 동일 요일 고정. 다시 클릭하면 자동으로 돌아갑니다.</div>
+      <div class="preferred-grid">${gc}</div></div>`;
+  }
+  let avGrid=`<div class="avail-grid"><div class="avail-header"></div>${WD_NAMES.map(w=>`<div class="avail-header">${w}</div>`).join('')}`;
+  TIMES.forEach(t=>{avGrid+=`<div class="avail-time-label">${t}:00</div>`;for(let wd=0;wd<5;wd++){const on=data.slots[wd]&&data.slots[wd].includes(t);avGrid+=`<button class="avail-toggle ${on?'on':''}" onclick="toggleSlot('${selectedChild}',${wd},${t},this)">${on?'가능':'불가'}</button>`;}});
+  avGrid+='</div>';
+  card.innerHTML=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+    <input id="edit-name" value="${selectedChild}" style="font-size:15px;font-weight:600;border:none;border-bottom:1.5px solid #e0dfd8;outline:none;padding:2px 4px;font-family:'Noto Sans KR',sans-serif;background:transparent;width:100px"/>
+    <span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#555"><span class="status-dot" style="background:${isA?'#10b981':'#d1d5db'}"></span>${isA?'재원 중':'퇴소'}</span>
+  </div>
+  <div style="font-size:12px;color:#888;margin-bottom:1rem">${data.type}상담</div>
+  <div class="date-row">
+    <div class="date-field"><div class="date-label">입소일</div><input class="date-input" type="date" id="edit-admit" value="${data.admit||''}"/><div class="date-hint">모르면 비워두세요</div></div>
+    <div class="date-field"><div class="date-label">퇴소일</div><input class="date-input" type="date" id="edit-discharge" value="${data.discharge||''}" onchange="previewStatus(this.value)"/>
+      <div class="date-hint">입력 시 자동 비활성화</div>
+      <div class="status-row"><span class="status-dot" style="background:${isA?'#10b981':'#d1d5db'}"></span><span id="status-text" style="font-size:12px;color:#555">${isA?'재원 중':'퇴소'}</span></div>
+    </div>
+  </div>
+  ${preferHTML}
+  <div style="font-size:12px;font-weight:600;color:#333;margin-bottom:8px">상담 가능 시간</div>
+  ${avGrid}
+  <div class="editor-actions">
+    <button class="btn btn-primary" onclick="saveChild()">✓ 저장</button>
+    <button class="btn" onclick="resetChild()">↺ 기본값</button>
+    <button class="btn btn-danger" onclick="removeChild('${selectedChild}')">삭제</button>
+  </div>
+  <div class="save-notice" id="save-notice"></div>`;
+}
+function setPrefer(wd,time){
+  const data=AVAIL[selectedChild];if(!data)return;
+  if(data.preferDay===wd&&data.preferTime===time){data.preferDay=null;data.preferTime=null;}
+  else{data.preferDay=wd;data.preferTime=time;}
+  renderEditorCard();
+}
+function previewStatus(val){
+  const dot=document.querySelector('.status-row .status-dot');
+  const txt=document.getElementById('status-text');
+  if(!dot||!txt)return;
+  if(val&&new Date(val)<TODAY){dot.style.background='#d1d5db';txt.textContent='퇴소 처리됨';}
+  else{dot.style.background='#10b981';txt.textContent='재원 중';}
+}
+function toggleSlot(child,wd,time,btn){
+  const slots=AVAIL[child].slots;if(!slots[wd])slots[wd]=[];
+  const idx=slots[wd].indexOf(time);
+  if(idx>-1){slots[wd].splice(idx,1);btn.className='avail-toggle';btn.textContent='불가';}
+  else{slots[wd].push(time);slots[wd].sort();btn.className='avail-toggle on';btn.textContent='가능';}
+  const data=AVAIL[child];
+  if(data.preferDay===wd&&data.preferTime===time&&idx>-1){data.preferDay=null;data.preferTime=null;}
+}
+function saveChild(){
+  if(!selectedChild)return;
+  const newName = document.getElementById('edit-name')?.value.trim();
+  // 이름 변경 처리
+  if(newName && newName !== selectedChild){
+    if(AVAIL[newName]){ alert('이미 존재하는 이름입니다.'); return; }
+    AVAIL[newName] = AVAIL[selectedChild];
+    delete AVAIL[selectedChild];
+    // schedule에서 이름 변경
+    Object.values(schedule).forEach(slots=>slots.forEach(s=>{ if(s.child===selectedChild) s.child=newName; }));
+    selectedChild = newName;
+  }
+  AVAIL[selectedChild].admit=document.getElementById('edit-admit')?.value||'';
+  AVAIL[selectedChild].discharge=document.getElementById('edit-discharge')?.value||'';
+  const n=document.getElementById('save-notice');
+  if(n){n.style.display='block';n.textContent='✓ 저장 완료!';setTimeout(()=>n.style.display='none',3000);}
+  renderChildTabs();renderChildTable();
+  autoSave();
+}
+function resetChild(){
+  if(!selectedChild)return;
+  const def=DEFAULT_AVAIL[selectedChild];
+  if(def){AVAIL[selectedChild].slots=JSON.parse(JSON.stringify(def.slots));AVAIL[selectedChild].preferDay=def.preferDay;AVAIL[selectedChild].preferTime=def.preferTime;renderEditorCard();}
+}
+function removeChild(name){
+  if(!confirm(`${name} 아동을 삭제할까요?`))return;
+  delete AVAIL[name];selectedChild=null;renderChildTabs();renderEditorCard();renderChildTable();
+  autoSave();
+}
+function setFilter(f,btn){tableFilter=f;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderChildTable();}
+function renderChildTable(){
+  const tbody=document.getElementById('child-tbody');tbody.innerHTML='';
+  Object.entries(AVAIL).filter(([,v])=>{const a=isCurrentlyActive(v);if(tableFilter==='active')return a;if(tableFilter==='inactive')return !a;return true;}).forEach(([name,data])=>{
+    const active=isCurrentlyActive(data);
+    const tr=document.createElement('tr');if(!active)tr.className='row-inactive';
+    const pl=data.preferDay!==null?`${WD_NAMES[data.preferDay]}${data.preferTime?'/'+data.preferTime:''}`:'-';
+    let cells=`<td style="font-weight:600;text-align:center">${name}</td><td class="center"><span class="badge badge-${data.type}">${data.type}</span></td>
+      <td class="center" style="font-size:11px">${fmtDate(data.admit)}</td><td class="center" style="font-size:11px">${fmtDate(data.discharge)}</td>
+      <td class="center"><span style="display:inline-flex;align-items:center;gap:3px;font-size:11px"><span style="width:6px;height:6px;border-radius:50%;background:${active?'#10b981':'#d1d5db'};display:inline-block"></span>${active?'재원':'퇴소'}</span></td>
+      <td class="center" style="font-size:11px;color:${data.preferDay!==null?'#3a5bd9':'#aaa'}">${pl}</td>`;
+    for(let wd=0;wd<5;wd++)TIMES.forEach(t=>{const ok=data.slots[wd]&&data.slots[wd].includes(t);cells+=`<td class="${ok?'avail-cell-ok':'avail-cell-no'}">${ok?'○':'✕'}</td>`;});
+    cells+=`<td class="center"><button class="btn btn-sm" onclick="selectedChild='${name}';showTab('editor');renderChildTabs();renderEditorCard()">수정</button></td>`;
+    tr.innerHTML=cells;tbody.appendChild(tr);
+  });
+}
+function addChild(){
+  const name=document.getElementById('new-name').value.trim();
+  const type=document.getElementById('new-type').value;
+  const admit=document.getElementById('new-admit').value;
+  if(!name){alert('이름을 입력해 주세요.');return;}
+  if(AVAIL[name]){alert('이미 등록된 이름입니다.');return;}
+  AVAIL[name]={type,admit,discharge:'',preferDay:null,preferTime:null,slots:{0:[16,18],1:[16,18],2:[16,18],3:[16,18],4:[16,18]}};
+  document.getElementById('new-name').value='';document.getElementById('new-admit').value='';
+  const n=document.getElementById('add-notice');n.style.display='block';setTimeout(()=>n.style.display='none',3000);
+  selectedChild=name;renderChildTabs();renderEditorCard();renderChildTable();
+  autoSave();
+}
+function printSchedule(){
+  document.getElementById('print-header-title').textContent=`${curYear}년 ${MN[curMonth]} 상담일정`;
+  const totalSessions=Object.values(schedule).flat().filter(s=>s.child&&!s.cancelled).length;
+  document.getElementById('print-header-sub').textContent=`집중상담 ${Object.values(schedule).flat().filter(s=>s.child&&!s.cancelled&&s.type==='정기').length}회 · 개별상담 ${Object.values(schedule).flat().filter(s=>s.child&&!s.cancelled&&s.type==='일반').length}회 · 총 ${totalSessions}회`;
+  window.print();
+}
+
+function saveOverallJSON(){
+  const data = JSON.stringify({overallData}, null, 2);
+  const a = Object.assign(document.createElement('a'),{
+    href: URL.createObjectURL(new Blob([data],{type:'application/json'})),
+    download: `전체상담현황_백업_${new Date().getFullYear()}년.json`
+  });
+  a.click();
+  showToast('💾 전체 상담 현황 저장됨');
+}
+
+function printOverall(){
+  window.print();
+}
+
+function exportExcel(){
+  const wb = XLSX.utils.book_new();
+
+  // ── 시트1: 월간 달력 형식 ──────────────────────────────────
+  const days = getWorkdays(curYear, curMonth);
+  const weeks = [];
+  const firstWd = days[0].getDay();
+  const sp = firstWd===1?0:(firstWd===0?4:firstWd-1);
+  let wds = [];
+  for(let i=0;i<sp;i++) wds.push(null);
+  days.forEach(d=>wds.push(d));
+  while(wds.length%5!==0) wds.push(null);
+  for(let i=0;i<wds.length;i+=5) weeks.push(wds.slice(i,i+5));
+
+  const calData = [['월요일','화요일','수요일','목요일','금요일']];
+  weeks.forEach(week=>{
+    // 날짜 행
+    const dateRow = week.map(d=>d?`${d.getMonth()+1}/${d.getDate()}`:'');
+    calData.push(dateRow);
+    // 슬롯 행들 (최대 슬롯 수 맞춤)
+    const slotsByDay = week.map(d=>{
+      if(!d) return [];
+      const k=`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+      return (schedule[k]||[]).filter(s=>s.child).map(s=>{
+        const past=isPastDate(d)&&!isToday(d);
+        const status=s.cancelled?`(${s.cancelReason||'취소'})`:s.done?'✓':past?'완료':'';
+        return `${fmtTime(s.time)} ${s.child} ${status}`.trim();
+      });
+    });
+    const maxSlots = Math.max(...slotsByDay.map(s=>s.length), 1);
+    for(let si=0;si<maxSlots;si++){
+      calData.push(slotsByDay.map(slots=>slots[si]||''));
+    }
+    calData.push(['','','','','']); // 주 구분 빈 행
+  });
+
+  const calSheet = XLSX.utils.aoa_to_sheet(calData);
+  // 열 너비 설정
+  calSheet['!cols'] = [{wch:16},{wch:16},{wch:16},{wch:16},{wch:16}];
+  XLSX.utils.book_append_sheet(wb, calSheet, `${curMonth+1}월 달력`);
+
+  // ── 시트2: 목록 형식 ──────────────────────────────────────
+  const listData = [['날짜','요일','시간','아동명','상담유형','완료여부','취소사유']];
+  days.forEach(d=>{
+    const k=`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    (schedule[k]||[]).filter(s=>s.child).forEach(s=>{
+      const past=isPastDate(d)&&!isToday(d);
+      const done=s.done||(past&&!s.cancelled)?'완료':'미완료';
+      const ds=`${curYear}-${String(curMonth+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+      listData.push([ds, WDS[d.getDay()], fmtTime(s.time), s.child,
+        s.type==='정기'?'집중상담':'개별상담',
+        s.cancelled?'취소':s.done?'완료':past?'완료':'예정',
+        s.cancelReason||'']);
+    });
+  });
+  const listSheet = XLSX.utils.aoa_to_sheet(listData);
+  listSheet['!cols']=[{wch:12},{wch:6},{wch:8},{wch:10},{wch:10},{wch:8},{wch:14}];
+  XLSX.utils.book_append_sheet(wb, listSheet, `${curMonth+1}월 목록`);
+
+  // ── 시트3: 아동별 현황 ────────────────────────────────────
+  const compLog = calcCompletedLog();
+  const childData = [['아동명','유형','상태','월 목표','이번달 완료','연간 완료']];
+  Object.entries(AVAIL).forEach(([name,data])=>{
+    const active=isCurrentlyActive(data);
+    const mg=data.type==='정기'?2:1;
+    const mDone=(compLog[curYear]?.[curMonth]?.perChild||{})[name]||0;
+    let yDone=0;
+    if(compLog[curYear]) Object.values(compLog[curYear]).forEach(m=>{yDone+=(m.perChild||{})[name]||0;});
+    childData.push([name, data.type==='정기'?'집중':'개별', active?'재원':'퇴소', mg, mDone, yDone]);
+  });
+  const childSheet = XLSX.utils.aoa_to_sheet(childData);
+  childSheet['!cols']=[{wch:10},{wch:8},{wch:6},{wch:8},{wch:10},{wch:10}];
+  XLSX.utils.book_append_sheet(wb, childSheet, '아동별 현황');
+
+  XLSX.writeFile(wb, `상담일정_${curYear}년${curMonth+1}월.xlsx`);
+  showToast('📊 엑셀 파일 저장됨');
+}
+function copyText(){
+  const days=getWorkdays(curYear,curMonth);
+  let text=`📋 ${curYear}년 ${curMonth+1}월 상담일정\n\n`;
+  days.forEach(d=>{const k=`${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    const ss=(schedule[k]||[]).filter(s=>s.child);if(!ss.length)return;
+    const past=isPastDate(d)&&!isToday(d);
+    text+=`[${d.getMonth()+1}/${d.getDate()}(${WDS[d.getDay()]})]${past?' ✓':''} ${ss.map(s=>`${fmtTime(s.time)} ${s.child}(${s.type})`).join(' / ')}\n`;});
+  navigator.clipboard.writeText(text).then(()=>alert('복사되었습니다!')).catch(()=>alert('복사 실패.'));
+}
+
+// ── 자동저장 (localStorage) ───────────────────────────────────
+const LS_KEY = 'counseling_schedule_v7';
+let autoSaveTimer = null;
+
+function getAppState(){
+  return {
+    schedule: Object.fromEntries(Object.entries(schedule).map(([k,v])=>[k,v.map(s=>({...s,date:s.date.toISOString()}))])),
+    monthlyLog, AVAIL, curYear, curMonth,
+    generatedMonths: [...generatedMonths],
+    blockedDates: [...BLOCKED_DATES.entries()],
+    overallData
+  };
+}
+
+function applyAppState(state){
+  schedule = {};
+  Object.entries(state.schedule||{}).forEach(([k,arr])=>{
+    schedule[k] = arr.map(s=>({...s, date: new Date(s.date)}));
+  });
+  if(state.monthlyLog) Object.assign(monthlyLog, state.monthlyLog);
+  if(state.AVAIL) Object.assign(AVAIL, state.AVAIL);
+  if(state.curYear) curYear = state.curYear;
+  if(state.curMonth !== undefined) curMonth = state.curMonth;
+  if(state.generatedMonths) state.generatedMonths.forEach(k=>generatedMonths.add(k));
+  if(state.blockedDates){ BLOCKED_DATES.clear(); state.blockedDates.forEach(([k,v])=>BLOCKED_DATES.set(k,v)); }
+  // overallData: 코드 기준 유지, localStorage의 수동 입력값(room/guide/clinicManual)만 병합
+  // → 이름·학년·순서는 항상 코드 기준, 날짜 입력값은 저장된 값 우선
+  if(state.overallData){
+    const savedMap = {};
+    state.overallData.forEach(d=>{ savedMap[d.name] = d; });
+    overallData = overallData.map(d=>{
+      const saved = savedMap[d.name];
+      if(!saved) return d;
+      const room = Array(ROOM_COLS).fill('');
+      const guide = Array(GUIDE_COLS).fill('');
+      if(saved.room) saved.room.filter(v=>v&&v.trim()).forEach((v,i)=>{ if(i<ROOM_COLS) room[i]=v; });
+      if(saved.guide) saved.guide.filter(v=>v&&v.trim()).forEach((v,i)=>{ if(i<GUIDE_COLS) guide[i]=v; });
+      const clinicManual = d.clinicManual !== null
+        ? (saved.clinicManual ? [...saved.clinicManual] : Array(GUIDE_COLS).fill(''))
+        : null;
+      return {...d, room, guide, clinicManual};
+    });
+  }
+}
+
+function autoSave(){
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(()=>{
+    try{
+      localStorage.setItem(LS_KEY, JSON.stringify(getAppState()));
+      showToast('✓ 자동 저장됨');
+    }catch(e){ showToast('⚠ 저장 실패 (용량 초과)'); }
+  }, 800);
+}
+
+function showToast(msg){
+  const t = document.getElementById('autosave-toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2000);
+}
+
+function resetApp(){
+  if(!confirm('저장된 데이터를 모두 삭제하고 처음부터 다시 시작할까요?\n\n⚠️ 지금까지 수정한 내용이 모두 사라집니다.\n먼저 💾 저장으로 백업해두세요.')) return;
+  localStorage.removeItem(LS_KEY);
+  location.reload();
+}
+
+function exportJSON(){
+  const data = JSON.stringify(getAppState(), null, 2);
+  const a = Object.assign(document.createElement('a'),{
+    href: URL.createObjectURL(new Blob([data],{type:'application/json'})),
+    download: `상담일정_백업_${curYear}년${curMonth+1}월.json`
+  });
+  a.click();
+  showToast('💾 파일로 저장됨');
+}
+
+function importJSON(e){
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try{
+      const state = JSON.parse(ev.target.result);
+      applyAppState(state);
+      localStorage.setItem(LS_KEY, JSON.stringify(getAppState()));
+      render(); renderChildTabs(); renderChildTable();
+      showToast('📂 불러오기 완료');
+    }catch(err){ alert('파일을 읽을 수 없습니다. 올바른 백업 파일인지 확인해주세요.'); }
+  };
+  reader.readAsText(file);
+  e.target.value = ''; // 같은 파일 재선택 가능하게
+}
+
+// ── 전체 상담 현황 ────────────────────────────────────────────
+const ROOM_COLS = 8;
+const GUIDE_COLS = 4;
+
+// ★ 수정 포인트 3: 전체 현황표 아동 데이터
+// clinicManual: null → 앱 일정과 자동 연동 / Array → 수동 입력
+// 이미지 기반 초기 데이터
+// ★ 수정 포인트 3: 전체 현황표 아동 데이터 (캡처 기준 고정값)
+// room: 방 담당교사 상담 날짜 입력 (ROOM_COLS=8칸)
+// guide: 상담지도원 상담 날짜 입력 (GUIDE_COLS=4칸)
+// clinicManual: null=앱 자동연동 / Array=수동입력(앱 미등록 아동)
+let overallData = [
+  // ── 앱 연동 아동 (임상심리 자동집계) ──────────────────────────
+  { name:'이로운',  grade:'초등2',  room:['2/14','','','','','','',''], guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'김재현',  grade:'초등3',  room:['2/26','','','','','','',''], guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'문지완',  grade:'초등3',  room:['2월','','','','','','',''],  guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'김영진',  grade:'초등4',  room:['1/25','','','','','','',''], guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'김도윤',  grade:'초등4',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'김선웅',  grade:'초등1',  room:['2/14','','','','','','',''], guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'김민재',  grade:'미취학', room:['1/24','','','','','','',''], guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'오하영',  grade:'초등1',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'문수아',  grade:'초등1',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'유하린',  grade:'미취학', room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'김우빈',  grade:'중등1',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'김용현',  grade:'중등1',  room:Array(ROOM_COLS).fill(''),    guide:['3/12','','',''],          clinicManual:null },
+  { name:'황민수',  grade:'중등1',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'김현진',  grade:'중등3',  room:['2/25','','','','','','',''], guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'박찬율',  grade:'초등5',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'이지후',  grade:'초등6',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'이재민',  grade:'초등5',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'김한별',  grade:'초등3',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'황다은',  grade:'초등4',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'김사랑',  grade:'초등4',  room:['2/11','','','','','','',''], guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'오하은',  grade:'초등6',  room:['2/15','','','','','','',''], guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'김민지',  grade:'초등6',  room:['2/16','','','','','','',''], guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  // ── 앱 미등록 아동 (임상심리 수동입력) ────────────────────────
+  { name:'조희정',  grade:'중등2',  room:Array(ROOM_COLS).fill(''),    guide:['2/2','','',''],           clinicManual:Array(GUIDE_COLS).fill('') },
+  { name:'김현정',  grade:'고등1',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
+  { name:'임재인',  grade:'고등1',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
+  { name:'김경헌',  grade:'고등2',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
+  { name:'윤우진',  grade:'고등2',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
+  { name:'김주형',  grade:'고등2',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
+  { name:'이상현',  grade:'고등3',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
+  { name:'엄수경',  grade:'고등3',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
+  { name:'장성일',  grade:'2월졸업', room:['1/27','2/21','','','','','',''], guide:['1/27','','',''],  clinicManual:Array(GUIDE_COLS).fill('') },
+  { name:'권율',    grade:'2월졸업',  room:['1/19','2/22','','','','','',''], guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
+  { name:'장정은',  grade:'고등2',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
+  { name:'김가영',  grade:'고등3',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
+  { name:'김혜진',  grade:'2월졸업', room:['1/30','2/7','','','','','',''],  guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
+  { name:'박수진',  grade:'2월졸업', room:['1/23','2/7','','','','','',''],  guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
+  { name:'이희망',  grade:'2월졸업', room:['1/4','2/20','','','','','',''],  guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
+  { name:'김연아',  grade:'2월졸업', room:['1/14','2/9','','','','','',''],  guide:Array(GUIDE_COLS).fill(''), clinicManual:Array(GUIDE_COLS).fill('') },
+  { name:'강예림',  grade:'초등4',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'강석현',  grade:'초등6',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'강예린',  grade:'중등2',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+  { name:'정요한',  grade:'중등2',  room:Array(ROOM_COLS).fill(''),    guide:Array(GUIDE_COLS).fill(''), clinicManual:null },
+];
+
+function gradeOrder(grade){
+  const map = {'미취학':0,'초등1':1,'초등2':2,'초등3':3,'초등4':4,'초등5':5,'초등6':6,'중등1':7,'중등2':8,'중등3':9,'고등1':10,'고등2':11,'고등3':12};
+  return map[grade] !== undefined ? map[grade] : 99;
+}
+
+function sortOverallData(){
+  overallData.sort((a,b) => gradeOrder(a.grade) - gradeOrder(b.grade));
+}
+
+function addOverallChild(){
+  document.getElementById('overall-add-form').style.display='block';
+  document.getElementById('ov-name').focus();
+}
+
+function saveOverallChild(){
+  const name = document.getElementById('ov-name').value.trim();
+  const grade = document.getElementById('ov-grade').value.trim();
+  if(!name){ alert('이름을 입력해주세요.'); return; }
+  // 앱에 등록된 아동이면 clinic은 앱 연동, 아니면 수동 입력
+  const isAppChild = !!AVAIL[name];
+  overallData.push({ name, grade, room: Array(ROOM_COLS).fill(''), guide: Array(GUIDE_COLS).fill(''), clinicManual: isAppChild ? null : Array(GUIDE_COLS).fill('') });
+  sortOverallData();
+  document.getElementById('ov-name').value='';
+  document.getElementById('ov-grade').value='';
+  document.getElementById('overall-add-form').style.display='none';
+  renderOverall(); autoSave();
+}
+
+function deleteOverallChild(idx){
+  if(!confirm(`${overallData[idx].name}을(를) 삭제할까요?`)) return;
+  overallData.splice(idx, 1);
+  renderOverall(); autoSave();
+}
+
+function updateOverallMeta(idx, field, val){
+  val = val.trim();
+  if(!val) return;
+  if(field === 'name' && val !== overallData[idx].name){
+    const oldName = overallData[idx].name;
+    // AVAIL에 있는 앱 아동이면 schedule도 업데이트
+    if(AVAIL[oldName]){
+      AVAIL[val] = AVAIL[oldName];
+      delete AVAIL[oldName];
+      Object.values(schedule).forEach(slots=>slots.forEach(s=>{ if(s.child===oldName) s.child=val; }));
+    }
+  }
+  overallData[idx][field] = val;
+  autoSave();
+}
+
+function updateOverallCell(idx, type, col, val){
+  if(type==='room') overallData[idx].room[col] = val;
+  else if(type==='guide') overallData[idx].guide[col] = val;
+  else if(type==='clinic') overallData[idx].clinicManual[col] = val;
+  // 합계 셀 업데이트
+  const row = document.getElementById(`ov-row-${idx}`);
+  if(row){
+    const roomCnt = overallData[idx].room.filter(d=>d.trim()).length;
+    const guideCnt = overallData[idx].guide.filter(d=>d.trim()).length;
+    const clinic = getClinicCount(idx);
+    row.querySelector('.ov-room-sum').textContent = roomCnt||'';
+    row.querySelector('.ov-clinic-reg').textContent = clinic.reg||'';
+    row.querySelector('.ov-clinic-gen').textContent = clinic.gen||'';
+    row.querySelector('.ov-guide-sum').textContent = guideCnt||'';
+    row.querySelector('.ov-total').textContent = roomCnt+clinic.total+guideCnt||'';
+  }
+  updateOverallFooter();
+  autoSave();
+}
+
+function getClinicCount(idx){
+  const d = overallData[idx];
+  const year = parseInt(document.getElementById('overall-year')?.value)||2026;
+  const name = d.name;
+  if(!AVAIL[name]) return {reg:0, gen:0, total:0};
+  const isReg = AVAIL[name]?.type === '정기';
+  let reg=0, gen=0;
+
+  // schedule에서 완료된 세션 집계 (1~4월 모두)
+  Object.entries(schedule).forEach(([k, slots])=>{
+    const parts = k.split('-');
+    const y = parseInt(parts[0]), m = parseInt(parts[1]), day = parseInt(parts[2]);
+    if(y !== year) return;
+    const date = new Date(y, m, day);
+    slots.forEach(s=>{
+      if(s.child !== name) return;
+      if(!isCompleted(s, date)) return;
+      if(isReg) reg++; else gen++;
+    });
+  });
+
+  return {reg, gen, total: reg+gen};
+}
+
+function addOverallCol(type){
+  overallData.forEach(d=>{ d[type].push(''); });
+  autoSave(); renderOverall();
+}
+
+function updateOverallFooter(){
+  const tfoot = document.getElementById('overall-tfoot');
+  if(!tfoot) return;
+  let roomT=0, clinicRegT=0, clinicGenT=0, guideT=0;
+  overallData.forEach((_,i)=>{
+    roomT += overallData[i].room.filter(d=>d.trim()).length;
+    const cl = getClinicCount(i);
+    clinicRegT += cl.reg;
+    clinicGenT += cl.gen;
+    guideT += overallData[i].guide.filter(d=>d.trim()).length;
+  });
+  const clinicT = clinicRegT + clinicGenT;
+  const total = roomT+clinicT+guideT;
+  const roomCols = overallData[0]?.room.length || ROOM_COLS;
+  const guideCols = overallData[0]?.guide.length || GUIDE_COLS;
+  const c = 'border:1px solid #e0dfd8;padding:6px 4px;text-align:center';
+  tfoot.innerHTML = `
+    <td colspan="2" style="${c};font-weight:600">합계</td>
+    ${Array(roomCols).fill(`<td style="${c}"></td>`).join('')}
+    <td style="${c};background:#dbeafe;color:#1e40af;font-weight:700">${roomT||''}</td>
+    <td style="${c};background:#bbf7d0;color:#065f46;font-weight:700">${clinicRegT||''}</td>
+    <td style="${c};background:#bbf7d0;color:#059669;font-weight:700">${clinicGenT||''}</td>
+    ${Array(guideCols).fill(`<td style="${c}"></td>`).join('')}
+    <td style="${c};background:#fef3c7;color:#92400e;font-weight:700">${guideT||''}</td>
+    <td style="${c};background:#f0fdf4;color:#15803d;font-weight:700">${total||''}</td>
+    <td style="${c}" class="no-print"></td>`;
+}
+
+function renderOverall(){
+  sortOverallData();
+  // ── 연간 요약 계산 ──
+  let roomT=0, clinicT=0, guideT=0;
+  let childWithSession=0;
+  overallData.forEach((_,i)=>{
+    const r = overallData[i].room.filter(d=>d.trim()).length;
+    const c = getClinicCount(i).total;
+    const g = overallData[i].guide.filter(d=>d.trim()).length;
+    roomT+=r; clinicT+=c; guideT+=g;
+    if(r+c+g>0) childWithSession++;
+  });
+  const total = roomT+clinicT+guideT;
+  // 연간 목표: 임상심리 기준 (앱 목표)
+  let annualPlan=0;
+  Object.values(AVAIL).forEach(v=>{for(let m=0;m<12;m++){if(isActiveAt(v,2026,m))annualPlan+=v.type==='정기'?2:1;}});
+  const pct = annualPlan>0?Math.round(total/annualPlan*100):0;
+  const remain = Math.max(annualPlan-total,0);
+
+  // 진행률 카드
+  document.getElementById('ov-done').textContent=total;
+  document.getElementById('ov-plan').textContent=annualPlan;
+  document.getElementById('ov-pct').textContent=pct+'%';
+  document.getElementById('ov-remain').textContent=remain;
+  document.getElementById('ov-bar').style.width=Math.min(pct,100)+'%';
+  document.getElementById('ov-bar').style.background=pct>=90?'#10b981':pct>=60?'#3a5bd9':'#f59e0b';
+  document.getElementById('ov-sub').textContent=`방 담당교사 ${roomT}회 · 임상심리 ${clinicT}회 · 상담지도원 ${guideT}회`;
+
+  // 유형별 비율
+  const mx = Math.max(total,1);
+  document.getElementById('ov-room-bar').style.width=Math.round(roomT/mx*100)+'%';
+  document.getElementById('ov-clinic-bar').style.width=Math.round(clinicT/mx*100)+'%';
+  document.getElementById('ov-guide-bar').style.width=Math.round(guideT/mx*100)+'%';
+  document.getElementById('ov-room-pct').textContent=roomT+'회';
+  document.getElementById('ov-clinic-pct').textContent=clinicT+'회';
+  document.getElementById('ov-guide-pct').textContent=guideT+'회';
+
+  // 상담원별 합계
+  document.getElementById('ov-room-total').textContent=roomT;
+  document.getElementById('ov-clinic-total').textContent=clinicT;
+  document.getElementById('ov-guide-total').textContent=guideT;
+
+  // 상담 아동
+  document.getElementById('ov-child-cnt').textContent=childWithSession;
+  document.getElementById('ov-child-sub').textContent=`전체 ${overallData.length}명 중 ${childWithSession}명 상담 진행`;
+
+  // ── 날짜 헤더 ──
+  const hdr = document.getElementById('overall-date-header');
+  const cs = 'padding:3px 2px;border:1px solid #e0dfd8;text-align:center;min-width:40px;font-size:10px;color:#888';
+  const roomCols = overallData[0]?.room.length || ROOM_COLS;
+  const guideCols = overallData[0]?.guide.length || GUIDE_COLS;
+
+  // 상단 헤더 colspan 동적 업데이트
+  const thRoom = document.getElementById('th-room');
+  const thGuide = document.getElementById('th-guide');
+  if(thRoom) thRoom.setAttribute('colspan', roomCols);
+  if(thGuide) thGuide.setAttribute('colspan', guideCols);
+
+  hdr.innerHTML =
+    Array(roomCols).fill(0).map((_,i)=>`<td style="${cs}">${i+1}</td>`).join('') +
+    `<td style="${cs};background:#bbf7d0;color:#065f46;font-weight:600">집중</td>` +
+    `<td style="${cs};background:#bbf7d0;color:#059669;font-weight:600">개별</td>` +
+    Array(guideCols).fill(0).map((_,i)=>`<td style="${cs}">${i+1}</td>`).join('');
+
+  const tbody = document.getElementById('overall-tbody');
+  tbody.innerHTML = '';
+
+  overallData.forEach((d, idx)=>{
+    const clinic = getClinicCount(idx);
+    const clinicCnt = clinic.total;
+    const roomCnt = d.room.filter(v=>v.trim()).length;
+    const guideCnt = d.guide.filter(v=>v.trim()).length;
+    const total = roomCnt + clinicCnt + guideCnt;
+
+    const inputCell = (type, col, val) =>
+      `<td style="padding:2px;border:1px solid #e0dfd8;text-align:center">
+        <input value="${val}" onblur="updateOverallCell(${idx},'${type}',${col},this.value)"
+          style="width:38px;font-size:10px;border:none;outline:none;text-align:center;font-family:'Noto Sans KR',sans-serif;background:transparent"/>
+      </td>`;
+
+    const tr = document.createElement('tr');
+    tr.id = `ov-row-${idx}`;
+    tr.innerHTML = `
+      <td style="padding:2px;border:1px solid #e0dfd8;min-width:70px;text-align:center">
+        <span style="font-size:10px;color:#aaa;margin-right:2px">${idx+1}.</span><input value="${d.name}" onblur="updateOverallMeta(${idx},'name',this.value)"
+          onfocus="this.style.borderBottom='1.5px solid #3a5bd9'"
+          onblur2="this.style.borderBottom='none'"
+          style="width:56px;font-size:12px;font-weight:600;border:none;border-bottom:1px solid transparent;outline:none;text-align:center;font-family:'Noto Sans KR',sans-serif;background:transparent;cursor:text"/>
+      </td>
+      <td style="padding:2px;border:1px solid #e0dfd8;text-align:center;min-width:55px">
+        <input value="${d.grade}" onblur="updateOverallMeta(${idx},'grade',this.value)"
+          onfocus="this.style.borderBottom='1.5px solid #3a5bd9'"
+          style="width:52px;font-size:11px;color:#888;border:none;border-bottom:1px solid transparent;outline:none;text-align:center;font-family:'Noto Sans KR',sans-serif;background:transparent;cursor:text"/>
+      </td>
+      ${d.room.map((v,c)=>inputCell('room',c,v)).join('')}
+      <td class="ov-room-sum" style="padding:6px 4px;border:1px solid #e0dfd8;text-align:center;font-weight:600;background:#eff6ff;color:#1e40af">${roomCnt||''}</td>
+      <td class="ov-clinic-reg" style="padding:6px 4px;border:1px solid #e0dfd8;text-align:center;font-weight:600;background:#bbf7d0;color:#065f46">${clinic.reg||''}</td>
+      <td class="ov-clinic-gen" style="padding:6px 4px;border:1px solid #e0dfd8;text-align:center;font-weight:600;background:#bbf7d0;color:#059669">${clinic.gen||''}</td>
+      ${d.guide.map((v,c)=>inputCell('guide',c,v)).join('')}
+      <td class="ov-guide-sum" style="padding:6px 4px;border:1px solid #e0dfd8;text-align:center;font-weight:600;background:#fffbeb;color:#92400e">${guideCnt||''}</td>
+      <td class="ov-total" style="padding:6px 4px;border:1px solid #e0dfd8;text-align:center;font-weight:700;background:#f0fdf4;color:#15803d">${total||''}</td>
+      <td style="padding:4px;border:1px solid #e0dfd8;text-align:center" class="no-print">
+        <button onclick="deleteOverallChild(${idx})" style="font-size:10px;padding:2px 8px;border:1px solid #fca5a5;background:#fff0f0;color:#dc2626;border-radius:4px;cursor:pointer;font-family:inherit">삭제</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+  updateOverallFooter();
+}
+
+// ★ 수정 포인트 2: 월별 실제 일정 입력
+// add(날짜, 시간, '아동이름', '정기'|'일반')
+// ── 1월 일정 직접 입력 ─────────────────────────
+function loadJanSchedule(){
+  Object.keys(schedule).forEach(k=>{ if(k.startsWith('2026-0-')) delete schedule[k]; });
+  const add = (date,time,child,type) => {
+    const d=new Date(2026,0,date), k=`2026-0-${date}`;
+    if(!schedule[k]) schedule[k]=[];
+    schedule[k].push({date:d, wd:d.getDay()-1, time, child, type, conflict:false, cancelled:false});
+  };
+  // 1/5(월)
+  add(5,18,'이로운','정기');
+  // 1/6(화)
+  add(6,18,'유하린','정기');
+  // 1/7(수)
+  add(7,16,'오하영','정기'); add(7,18,'문수아','일반');
+  // 1/8(목)
+  add(8,18,'김민재','정기');
+  // 1/12(월) 출근 - 상담없음
+  add(12,18,'황다은','일반');
+  // 1/13(화)
+  add(13,18,'유하린','정기');
+  // 1/14(수)
+  add(14,16,'문지완','정기'); add(14,18,'오하은','일반');
+  // 1/15(목)
+  add(15,16,'김민지','정기'); add(15,18,'김영진','정기');
+  // 1/16(금)
+  add(16,16,'김민재','정기'); add(16,18,'문지완','정기');
+  // 1/19(월)
+  add(19,16,'김영진','정기'); add(19,18,'김선웅','정기');
+  // 1/20(화)
+  add(20,16,'이로운','정기'); add(20,18,'김한별','정기');
+  // 1/21(수)
+  add(21,16,'김사랑','일반'); add(21,18,'김재현','일반');
+  // 1/27(화)
+  add(27,11,'박찬율','일반'); add(27,18,'김민지','정기');
+  // 1/28(수)
+  add(28,16,'김도윤','일반'); add(28,18,'오하영','정기');
+  // 1/29(목)
+  add(29,16,'이재민','일반'); add(29,18,'김선웅','정기');
+  // 1/30(금)
+  add(30,16,'김한별','정기'); add(30,18,'이지후','일반');
+  Object.keys(schedule).forEach(k=>{ if(k.startsWith('2026-0-')) schedule[k].sort((a,b)=>a.time-b.time); });
+}
+
+// ── 2월 일정 직접 입력 (이미지 기반) ─────────────────────────
+function loadFebSchedule(){
+  Object.keys(schedule).forEach(k=>{ if(k.startsWith('2026-1-')) delete schedule[k]; });
+  const add = (date,time,child,type) => {
+    const d=new Date(2026,1,date), k=`2026-1-${date}`;
+    if(!schedule[k]) schedule[k]=[];
+    schedule[k].push({date:d, wd:d.getDay()-1, time, child, type, conflict:false, cancelled:false});
+  };
+  // 2/2(월)
+  add(2,16,'김영진','정기'); add(2,18,'이로운','정기');
+  // 2/3(화)
+  add(3,10,'김도윤','일반'); add(3,18,'오하은','일반');
+  // 2/4(수)
+  add(4,18,'김재현','일반');
+  // 2/5(목)
+  add(5,16,'김민지','정기'); add(5,18,'김민재','정기');
+  // 2/6(금)
+  add(6,18,'김한별','정기');
+  // 2/9(월)
+  add(9,16,'김영진','정기'); add(9,18,'이로운','정기');
+  // 2/10(화)
+  add(10,11,'이재민','일반'); add(10,18,'김선웅','정기');
+  // 2/11(수)
+  add(11,18,'오하영','정기');
+  // 2/12(목)
+  add(12,13,'박찬율','일반'); add(12,18,'김민재','정기');
+  // 2/13(금)
+  add(13,13,'이지후','일반'); add(13,16,'김민지','정기'); add(13,18,'문지완','정기');
+  // 2/19(목)
+  add(19,15,'김사랑','일반'); add(19,18,'유하린','정기');
+  // 2/25(수)
+  add(25,11,'문수아','일반'); add(25,18,'오하영','정기');
+  // 2/26(목)
+  add(26,13,'김선웅','정기'); add(26,16,'황다은','일반'); add(26,18,'유하린','정기');
+  // 2/27(금)
+  add(27,11,'김한별','정기'); add(27,18,'문지완','정기');
+  Object.keys(schedule).forEach(k=>{ if(k.startsWith('2026-1-')) schedule[k].sort((a,b)=>a.time-b.time); });
+}
+
+// ── 초기 실행 ─────────────────────────────────────────────────
+function initApp(){
+  loadJanSchedule();
+  loadFebSchedule();
+  loadMarchSchedule();
+  generatedMonths.add('2026-0');
+  generatedMonths.add('2026-1');
+  // 4월 미리 생성
+  if(!generatedMonths.has('2026-3')){
+    curYear=2026; curMonth=3;
+    loadAprilSchedule(); recordMonth();
+    generatedMonths.add('2026-3');
+  }
+  curYear=2026; curMonth=2;
+  render();
+}
+
+const saved = localStorage.getItem(LS_KEY);
+if(saved){
+  try{
+    applyAppState(JSON.parse(saved));
+    // 아동 정보(타입·가용시간)는 항상 코드 기준으로 강제 복원
+    // → localStorage의 이전 타입(일반↔정기 오류 등) 무시
+    Object.entries(DEFAULT_AVAIL).forEach(([name, def])=>{
+      if(AVAIL[name]){
+        AVAIL[name].type = def.type;
+        AVAIL[name].slots = JSON.parse(JSON.stringify(def.slots));
+        AVAIL[name].preferDay = def.preferDay;
+        AVAIL[name].preferTime = def.preferTime;
+      } else {
+        AVAIL[name] = JSON.parse(JSON.stringify(def));
+      }
+    });
+    // 1~3월: 코드 기준 강제 덮어쓰기 (완료/취소 상태 보존)
+    const saveSlotState = (prefix) => {
+      const map = {};
+      Object.keys(schedule).filter(k=>k.startsWith(prefix)).forEach(k=>{
+        (schedule[k]||[]).forEach(s=>{
+          if(s.child) map[k+'_'+s.child+'_'+s.time] = {done:s.done, cancelled:s.cancelled, cancelReason:s.cancelReason};
+        });
+      });
+      return map;
+    };
+    const restoreSlotState = (prefix, map) => {
+      Object.keys(schedule).filter(k=>k.startsWith(prefix)).forEach(k=>{
+        (schedule[k]||[]).forEach(s=>{
+          const key = k+'_'+s.child+'_'+s.time;
+          if(map[key]){ s.done=map[key].done; s.cancelled=map[key].cancelled; s.cancelReason=map[key].cancelReason; }
+        });
+      });
+    };
+    const s0=saveSlotState('2026-0-'), s1=saveSlotState('2026-1-'), s2=saveSlotState('2026-2-');
+    loadJanSchedule();   restoreSlotState('2026-0-',s0); generatedMonths.add('2026-0');
+    loadFebSchedule();   restoreSlotState('2026-1-',s1); generatedMonths.add('2026-1');
+    loadMarchSchedule(); restoreSlotState('2026-2-',s2); generatedMonths.add('2026-2');
+    // 4월~: localStorage 저장값 우선 유지 (앱에서 수정한 내용 보존)
+    // 4월 데이터가 없을 때만 코드 기본값으로 초기화
+    const has4월 = Object.keys(schedule).some(k=>k.startsWith('2026-3-'));
+    if(!has4월){ loadAprilSchedule(); }
+    generatedMonths.add('2026-3');
+    render();
+    showToast('✓ 저장된 일정 불러옴');
+  }catch(e){
+    localStorage.removeItem(LS_KEY);
+    initApp();
+  }
+} else {
+  initApp();
+}
+</script>
+</body>
+</html>
